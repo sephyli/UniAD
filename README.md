@@ -33,8 +33,7 @@ We’re thrilled to announce ​**UniAD 2.0**, a milestone release delivering cr
 
 ​📅 ​**TODO List**
 - [x] Framework upgrade​ (`mmdet3d 1.0.0rc6`,  `torch 2.0.1+cu118`) → [Installation Guide](docs/INSTALL.md).
-- [ ] Checkpoints release for the new framework. [ETA 2025Q2]
-- [ ] Tools release for nuPlan and NAVSIM benchmark. [ETA 2025Q3]
+- [ ] Tools release for nuPlan and NAVSIM benchmark. [ETA 2025Q2]
 
 
 ## Table of Contents:
