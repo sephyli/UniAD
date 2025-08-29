@@ -150,3 +150,6 @@ debug/
 *projs/
 
 core.*
+
+# package
+mmcv
