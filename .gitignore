@@ -149,7 +149,11 @@ phoenix*
 debug/
 *projs/
 
+<<<<<<< HEAD
 core.*
 
 # 软件包
 mmcv
+=======
+core.*
+>>>>>>> main
