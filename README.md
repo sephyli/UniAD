@@ -1,9 +1,6 @@
-<<<<<<< HEAD
 > [!IMPORTANT]
 > 🌟 Stay up to date at [opendrivelab.com](https://opendrivelab.com/#news)!
 
-=======
->>>>>>> main
 <div align="center">   
   
 # Planning-oriented Autonomous Driving
@@ -14,11 +11,7 @@
   <a href="https://arxiv.org/abs/2212.10156">arXiv</a> |
   <a href="https://www.youtube.com/watch?v=cyrxJJ_nnaQ">Video</a> |
   <a href="sources/cvpr23_uniad_poster.png">Poster</a> |
-<<<<<<< HEAD
   <a href="https://opendrivelab.github.io/UniAD_plenary_talk_slides.pdf">Slides</a>
-=======
-  <a href="https://opendrivelab.com/e2ead/UniAD_plenary_talk_slides.pdf">Slides</a>
->>>>>>> main
 </h3>
 
 
@@ -30,7 +23,6 @@ https://github.com/OpenDriveLab/UniAD/assets/48089846/bcf685e4-2471-450e-8b77-e0
 
 
 
-<<<<<<< HEAD
 <br><br>
 
 ## 🚀 `2025/02/27` UniAD 2.0 Preview
@@ -45,27 +37,6 @@ We’re thrilled to announce ​**UniAD 2.0**, a milestone release delivering cr
 ​📅 ​**TODO List**
 - [x] Framework upgrade​ (`mmdet3d 1.0.0rc6`,  `torch 2.0.1+cu118`) → [Installation Guide](docs/INSTALL.md).
 - [ ] Tools release for nuPlan and NAVSIM benchmark. [ETA 2025Q2]
-=======
-
-
-<br><br>
-
-## 🎉🎉 UniAD-2.0 is Coming Soon!
-
-We are thrilled to announce the upcoming release of the latest version of our project! This update introduces essential upgrades and improvements to enhance functionality and ensure future compatibility.
-
-✨ **New Features & Upgrades**: We have updated [mmcv](https://github.com/open-mmlab/mmcv) and [mmdet3d](https://github.com/open-mmlab/mmdetection3d) to their latest versions. Importantly, checkpoints from previous versions are still compatible, allowing you to reproduce existing results effortlessly.
-
-‼️ **Critical Warning**: Due to changes in the underlying framework, our current bbox definition is now inconsistent with mmdet3d 1.0. Using any submethods or attributes related to mmdet3d's bbox implementation may result in unexpected errors or incorrect results.
-
-🎯 **Future Plans**: We are actively working on restructuring the codebase for enhanced flexibility, including support for customizable coordinate systems and smoother integration with [nuPlan](https://www.nuscenes.org/nuplan) and [NAVSIM](https://github.com/autonomousvision/navsim) datasets. Stay tuned for more dynamic and extensible workflows!
-
-- [x] Updated [mmcv](https://github.com/open-mmlab/mmcv) and [mmdet3d](https://github.com/open-mmlab/mmdetection3d). For installation instructions, check [Installation](docs/INSTALL.md).
-
-- [ ] Modify bbox definition to support mmdet3d 1.x and provide new checkpoints.
-
-- [ ] Support for [nuPlan](https://www.nuscenes.org/nuplan) and [NAVSIM](https://github.com/autonomousvision/navsim) datasets.
->>>>>>> main
 
 
 ## Table of Contents:
@@ -78,14 +49,8 @@ We are thrilled to announce the upcoming release of the latest version of our pr
    - [GPU Requirements](docs/TRAIN_EVAL.md#gpu)
    - [Train/Eval](docs/TRAIN_EVAL.md)
 4. [Results and Models](#models)
-<<<<<<< HEAD
 5. [License](#license)
 6. [Citation](#citation)
-=======
-5. [TODO List](#todos)
-6. [License](#license)
-7. [Citation](#citation)
->>>>>>> main
 8. [🔥 See Also: GenAD & Vista](#see)
 
 ## Highlights <a name="high"></a>
@@ -144,7 +109,6 @@ Pre-trained models and results under main metrics are provided below. We refer y
 | :---: | :---: | :---: | :---: | :---:|:---:| :---: | :---: | :---: |
 | UniAD-B | R101 | 0.363 | 0.313 | 0.705 | 63.7 | 0.29 |  [base-stage2](projects/configs/stage2_e2e/base_e2e.py) | [base-stage2](https://github.com/OpenDriveLab/UniAD/releases/download/v1.0.1/uniad_base_e2e.pth) |
 
-<<<<<<< HEAD
 > Planning results on the nuScense benchmark
 
 <table style="text-align: center; vertical-align: middle;">
@@ -185,8 +149,6 @@ Pre-trained models and results under main metrics are provided below. We refer y
 | :---: | :---: | :---: | :---: | :---:|:---:|:---:|:---:|
 | UniAD | R34 | 97.8 | 91.9 | 92.9 | 100 | 78.8 | 83.4 |
 
-=======
->>>>>>> main
 ### Checkpoint Usage
 * Download the checkpoints you need into `UniAD/ckpts/` directory.
 * You can evaluate these checkpoints to reproduce the results, following the `evaluation` section in [TRAIN_EVAL.md](docs/TRAIN_EVAL.md).
