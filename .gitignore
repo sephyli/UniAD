@@ -151,5 +151,8 @@ debug/
 
 core.*
 
-# package
+# mmcv package
 mmcv
+
+# vscode config file
+.vscode/
