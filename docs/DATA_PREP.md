@@ -59,6 +59,7 @@ UniAD
 │   │   ├── sweeps/
 │   │   ├── v1.0-test/
 │   │   ├── v1.0-trainval/
+│   │   ├── v1.0-mini/ 
 │   ├── infos/
 │   │   ├── nuscenes_infos_temporal_train.pkl
 │   │   ├── nuscenes_infos_temporal_val.pkl
