@@ -151,5 +151,8 @@ debug/
 
 core.*
 
-# 软件包
+# mmcv package
 mmcv
+
+# vscode config file
+.vscode/
