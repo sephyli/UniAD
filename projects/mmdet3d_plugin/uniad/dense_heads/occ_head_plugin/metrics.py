@@ -23,7 +23,7 @@ class IntersectionOverUnion(Metric):
     ):
         super().__init__(compute_on_step=compute_on_step)
         # TODO:  compute_on_step 参数错误--->原因是pytorch_lightning==1.2.5默认会传递compute_on_step参数，与torchmetrics版本不兼容
-        # NOTE: 降级torchmetrics比升级pytorch_lightning的风险要低，目前选择先降级torchmetrics==0.5.1
+        # NOTE: 降级torchmetrics比升级pytorch_lightning的风险要低，目前选择先降级torchmetrics==0.6.2 【Done】
         # super().__init__()
 
         self.n_classes = n_classes
