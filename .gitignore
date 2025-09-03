@@ -156,3 +156,5 @@ mmcv
 
 # vscode config file
 .vscode/
+
+*fixing.py

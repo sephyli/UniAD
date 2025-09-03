@@ -1,4 +1,5 @@
 import cv2
+import copy
 import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
@@ -78,12 +79,16 @@ class BEVRender(BaseRender):
         self.axes.axis('off')
         self.axes.set_aspect('equal')
 
-    def render_pred_box_data(self, agent_prediction_list):
+    def render_pred_box_data(self, agent_prediction_list, box_size, planning=False):
         for pred_agent in agent_prediction_list:
             c = np.array([0, 1, 0])
             if hasattr(pred_agent, 'pred_track_id') and pred_agent.pred_track_id is not None:  # this is true
                 tr_id = pred_agent.pred_track_id
                 c = color_mapping[tr_id % len(color_mapping)]
+            # TODO(bbox): here need to adapt the dataset configuration [Done]
+            if box_size=='wlh' and not planning:
+                wlh = copy.deepcopy(pred_agent.nusc_box.wlh)
+                pred_agent.nusc_box.wlh[0], pred_agent.nusc_box.wlh[1] = wlh[1], wlh[0]
             pred_agent.nusc_box.render(
                 axis=self.axes, view=self.view, colors=(c, c, c))
             if pred_agent.is_sdc:

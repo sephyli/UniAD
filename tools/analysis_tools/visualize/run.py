@@ -222,7 +222,7 @@ class Visualizer:
                 sample_token, self.nusc, self.predict_helper)
         if self.with_pred_box:
             self.bev_render.render_pred_box_data(
-                self.predictions[sample_token]['predicted_agent_list'])
+                self.predictions[sample_token]['predicted_agent_list'], args.box_size)
         if self.with_pred_traj:
             self.bev_render.render_pred_traj(
                 self.predictions[sample_token]['predicted_agent_list'])
@@ -234,7 +234,7 @@ class Visualizer:
                 self.predictions[sample_token]['predicted_agent_list'])
         if self.with_planning:
             self.bev_render.render_pred_box_data(
-                [self.predictions[sample_token]['predicted_planning']])
+                [self.predictions[sample_token]['predicted_planning']], args.box_size, planning=True)
             self.bev_render.render_planning_data(
                 self.predictions[sample_token]['predicted_planning'], show_command=self.show_command)
         if self.show_hd_map:
@@ -334,5 +334,6 @@ if __name__ == '__main__':
     parser.add_argument('--out_folder', default='/mnt/nas20/yihan01.hu/tmp/viz/demo_test/', help='Output folder path')
     parser.add_argument('--demo_video', default='mini_val_final.avi', help='Demo video name')
     parser.add_argument('--project_to_cam', default=True, help='Project to cam (default: True)')
+    parser.add_argument('--box_size', default='wlh', help='Choose the box size for different datasets') 
     args = parser.parse_args()
     main(args)
