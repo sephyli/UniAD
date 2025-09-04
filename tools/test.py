@@ -20,7 +20,12 @@ from projects.mmdet3d_plugin.uniad.apis.test import custom_multi_gpu_test
 from mmdet.datasets import replace_ImageToTensor
 import time
 import os.path as osp
-
+import debugpy
+#保证host和端口一致，listen可以只设置端口。则为localhost,否则设置成(host,port)
+debugpy.listen(17171)
+print('wait debugger')
+debugpy.wait_for_client()
+print("Debugger Attached")
 warnings.filterwarnings("ignore")
 
 def parse_args():

@@ -1,6 +1,7 @@
 import math
 import torch
 from einops import rearrange, repeat
+from tools.data_converter.box_transform_tool import limit_period
 
 def bivariate_gaussian_activation(ip):
     """
@@ -96,8 +97,10 @@ def anchor_coordinate_transform(anchors, bbox_results, with_translation_transfor
         yaw = bboxes.yaw.to(transformed_anchors.device)
         bbox_centers = bboxes.gravity_center.to(transformed_anchors.device)
         if with_rotation_transform: 
-            # TODO(box3d): we have changed yaw to mmdet3d 1.0.0rc6 format, maybe we should change this.
-            angle = yaw - 3.1415953 # num_agents, 1
+            # TODO(box3d): we have changed yaw to mmdet3d 1.0.0rc6 format, maybe we should change this.[Done]
+            # angle = yaw - 3.1415953 # num_agents, 1
+            angle = math.pi/2 - yaw
+            angle = limit_period(angle, period=math.pi * 2)
             rot_yaw = rot_2d(angle) # num_agents, 2, 2
             rot_yaw = rot_yaw[:, None, None,:, :] # num_agents, 1, 1, 2, 2
             transformed_anchors = rearrange(transformed_anchors, 'b g m t c -> b g m c t')  # 1, num_groups, num_modes, 12, 2 -> 1, num_groups, num_modes, 2, 12
@@ -130,8 +133,10 @@ def trajectory_coordinate_transform(trajectory, bbox_results, with_translation_t
         transformed_trajectory = trajectory[i,...]
         if with_rotation_transform:
             # we take negtive here, to reverse the trajectory back to ego centric coordinate
-            # TODO(box3d): we have changed yaw to mmdet3d 1.0.0rc6 format, maybe we should change this.
-            angle = -(yaw - 3.1415953) 
+            # TODO(box3d): we have changed yaw to mmdet3d 1.0.0rc6 format, maybe we should change this.[Done]
+            # angle = -(yaw - 3.1415953)
+            angle = math.pi - yaw
+            angle = limit_period(angle, period=math.pi * 2) 
             rot_yaw = rot_2d(angle)
             rot_yaw = rot_yaw[:,None, None,:, :] # A, 1, 1, 2, 2
             transformed_trajectory = rearrange(transformed_trajectory, 'a g p t c -> a g p c t') # A, G, P, 12 ,2 -> # A, G, P, 2, 12

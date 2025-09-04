@@ -5,7 +5,7 @@ from mmdet.core.bbox.builder import BBOX_CODERS
 from projects.mmdet3d_plugin.core.bbox.util import normalize_bbox, denormalize_bbox
 from mmdet3d.core import xywhr2xyxyr
 from mmcv.ops import nms_bev
-
+from tools.data_converter.box_transform_tool import get_new_boxes3d
 @BBOX_CODERS.register_module()
 class DETRTrack3DCoder(BaseBBoxCoder):
     """Bbox coder for DETR3D.
@@ -104,8 +104,9 @@ class DETRTrack3DCoder(BaseBBoxCoder):
                 mask = torch.ones_like(mask) > 0
             if self.with_nms:
                 mask &= nms_mask
-
+            # TODO(bbox)：Here boxes3d maybe need to convert acording to mmdet3d v1.0[Done]
             boxes3d = final_box_preds[mask]
+            boxes3d = get_new_boxes3d(boxes3d)
             scores = final_scores[mask]
             labels = final_preds[mask]
             track_scores = track_scores[mask]
