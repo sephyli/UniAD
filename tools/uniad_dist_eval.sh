@@ -8,7 +8,11 @@ CFG=$1                                               #
 CKPT=$2                                              #
 GPUS=$3                                              #    
 # -------------------------------------------------- #
-GPUS_PER_NODE=$(($GPUS<8?$GPUS:8))
+if [ $GPUS < 8 ]; then
+    GPUS_PER_NODE=$GPUS
+else
+    GPUS_PER_NODE=8
+fi
 
 MASTER_PORT=${MASTER_PORT:-28596}
 WORK_DIR=$(echo ${CFG%.*} | sed -e "s/configs/work_dirs/g")/
