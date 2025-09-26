@@ -70,6 +70,7 @@ class PerceptionTransformer(BaseModule):
             self.num_feature_levels, self.embed_dims))
         self.cams_embeds = nn.Parameter(
             torch.Tensor(self.num_cams, self.embed_dims))
+        self.reference_points = nn.Linear(self.embed_dims, 3)
         self.can_bus_mlp = nn.Sequential(
             nn.Linear(18, self.embed_dims // 2),
             nn.ReLU(inplace=True),
@@ -230,3 +231,93 @@ class PerceptionTransformer(BaseModule):
         inter_references_out = inter_references
 
         return inter_states, init_reference_out, inter_references_out
+
+    # NOTE: we add a forward function to adaptive bevformer
+    @auto_fp16(apply_to=('mlvl_feats', 'bev_queries', 'object_query_embed', 'prev_bev', 'bev_pos'))
+    def forward(self,
+                mlvl_feats,
+                bev_queries,
+                object_query_embed,
+                bev_h,
+                bev_w,
+                grid_length=[0.512, 0.512],
+                bev_pos=None,
+                reg_branches=None,
+                cls_branches=None,
+                prev_bev=None,
+                **kwargs):
+        """Forward function for `Detr3DTransformer`.
+        Args:
+            mlvl_feats (list(Tensor)): Input queries from
+                different level. Each element has shape
+                [bs, num_cams, embed_dims, h, w].
+            bev_queries (Tensor): (bev_h*bev_w, c)
+            bev_pos (Tensor): (bs, embed_dims, bev_h, bev_w)
+            object_query_embed (Tensor): The query embedding for decoder,
+                with shape [num_query, c].
+            reg_branches (obj:`nn.ModuleList`): Regression heads for
+                feature maps from each decoder layer. Only would
+                be passed when `with_box_refine` is True. Default to None.
+        Returns:
+            tuple[Tensor]: results of decoder containing the following tensor.
+                - bev_embed: BEV features
+                - inter_states: Outputs from decoder. If
+                    return_intermediate_dec is True output has shape \
+                      (num_dec_layers, bs, num_query, embed_dims), else has \
+                      shape (1, bs, num_query, embed_dims).
+                - init_reference_out: The initial value of reference \
+                    points, has shape (bs, num_queries, 4).
+                - inter_references_out: The internal value of reference \
+                    points in decoder, has shape \
+                    (num_dec_layers, bs,num_query, embed_dims)
+                - enc_outputs_class: The classification score of \
+                    proposals generated from \
+                    encoder's feature maps, has shape \
+                    (batch, h*w, num_classes). \
+                    Only would be returned when `as_two_stage` is True, \
+                    otherwise None.
+                - enc_outputs_coord_unact: The regression results \
+                    generated from encoder's feature maps., has shape \
+                    (batch, h*w, 4). Only would \
+                    be returned when `as_two_stage` is True, \
+                    otherwise None.
+        """
+
+        bev_embed = self.get_bev_features(
+            mlvl_feats,
+            bev_queries,
+            bev_h,
+            bev_w,
+            grid_length=grid_length,
+            bev_pos=bev_pos,
+            prev_bev=prev_bev,
+            **kwargs)  # bev_embed shape: bs, bev_h*bev_w, embed_dims
+
+        bs = mlvl_feats[0].size(0)
+        query_pos, query = torch.split(
+            object_query_embed, self.embed_dims, dim=1)
+        query_pos = query_pos.unsqueeze(0).expand(bs, -1, -1)
+        query = query.unsqueeze(0).expand(bs, -1, -1)
+        reference_points = self.reference_points(query_pos)
+        reference_points = reference_points.sigmoid()
+        init_reference_out = reference_points
+
+        query = query.permute(1, 0, 2)
+        query_pos = query_pos.permute(1, 0, 2)
+        bev_embed = bev_embed.permute(1, 0, 2)
+
+        inter_states, inter_references = self.decoder(
+            query=query,
+            key=None,
+            value=bev_embed,
+            query_pos=query_pos,
+            reference_points=reference_points,
+            reg_branches=reg_branches,
+            cls_branches=cls_branches,
+            spatial_shapes=torch.tensor([[bev_h, bev_w]], device=query.device),
+            level_start_index=torch.tensor([0], device=query.device),
+            **kwargs)
+
+        inter_references_out = inter_references
+
+        return bev_embed, inter_states, init_reference_out, inter_references_out

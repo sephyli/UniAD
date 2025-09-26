@@ -430,9 +430,9 @@ class NuScenesE2EDataset(NuScenesDataset):
         info = self.data_infos[index]
 
         # semantic format
-        lane_info = self.lane_infos[index] if self.lane_infos else None
+        lane_info = self.lane_infos[index] if self.lane_infos else None # 没有车道信息
         # panoptic format
-        location = self.nusc.get('log', self.nusc.get(
+        location = self.nusc.get('log', self.nusc.get(   # 城市："singapore-onenorth" or Boston Seaport or Queenstown
             'scene', info['scene_token'])['log_token'])['location']
         vectors = self.vector_map.gen_vectorized_samples(location,
                                                          info['ego2global_translation'],
@@ -503,8 +503,8 @@ class NuScenesE2EDataset(NuScenesDataset):
         l2e_r_mat = Quaternion(l2e_r).rotation_matrix
         e2g_r_mat = Quaternion(e2g_r).rotation_matrix
 
-        l2g_r_mat = l2e_r_mat.T @ e2g_r_mat.T
-        l2g_t = l2e_t @ e2g_r_mat.T + e2g_t
+        l2g_r_mat = l2e_r_mat.T @ e2g_r_mat.T   # lidar to global rotation matrix
+        l2g_t = l2e_t @ e2g_r_mat.T + e2g_t     # lidar to global translation matrix
 
         input_dict.update(
             dict(

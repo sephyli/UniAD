@@ -382,11 +382,13 @@ class UniADTrack(MVXTwoStageDetector):
                 so no need to call velocity update
         """
         # NOTE: You can replace BEVFormer with other BEV encoder and provide bev_embed here
+        # NOTE: BEVFormer outputs
         bev_embed, bev_pos = self.get_bevs(
             img, img_metas,
             prev_img=prev_img, prev_img_metas=prev_img_metas,
         )
 
+        
         det_output = self.pts_bbox_head.get_detections(
             bev_embed,
             object_query_embeds=track_instances.query,
@@ -651,6 +653,7 @@ class UniADTrack(MVXTwoStageDetector):
         track_instances = Instances.cat([other_inst, active_inst])
 
         # NOTE: You can replace BEVFormer with other BEV encoder and provide bev_embed here
+        # NOTE: BEVFormer outputs
         bev_embed, bev_pos = self.get_bevs(img, img_metas, prev_bev=prev_bev)
         det_output = self.pts_bbox_head.get_detections(
             bev_embed, 

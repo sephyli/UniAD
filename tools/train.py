@@ -25,7 +25,12 @@ from mmseg import __version__ as mmseg_version
 warnings.filterwarnings("ignore")
 
 from mmcv.utils import TORCH_VERSION, digit_version
-
+# import debugpy
+# #保证host和端口一致，listen可以只设置端口。则为localhost,否则设置成(host,port)
+# debugpy.listen(17171)
+# print('wait debugger')
+# debugpy.wait_for_client()
+# print("Debugger Attached")
 
 def parse_args():
     parser = argparse.ArgumentParser(description='Train a detector')
@@ -49,7 +54,7 @@ def parse_args():
         nargs='+',
         help='ids of gpus to use '
         '(only applicable to non-distributed training)')
-    parser.add_argument('--seed', type=int, default=0, help='random seed')
+    parser.add_argument('--seed', type=int, default=0, help='random seed')  # seed 默认为0
     parser.add_argument(
         '--deterministic',
         action='store_true',
@@ -198,13 +203,13 @@ def main():
 
     # log some basic info
     logger.info(f'Distributed training: {distributed}')
-    logger.info(f'Config:\n{cfg.pretty_text}')
+    logger.info(f'Config:\n{cfg.pretty_text}')   # logging config file
 
     # set random seeds
     if args.seed is not None:
         logger.info(f'Set random seed to {args.seed}, '
                     f'deterministic: {args.deterministic}')
-        set_random_seed(args.seed, deterministic=args.deterministic)
+        set_random_seed(args.seed, deterministic=args.deterministic) # random, np, torch
     cfg.seed = args.seed
     meta['seed'] = args.seed
     meta['exp_name'] = osp.basename(args.config)
