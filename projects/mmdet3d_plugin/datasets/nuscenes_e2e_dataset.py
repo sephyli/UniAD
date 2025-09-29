@@ -348,7 +348,7 @@ class NuScenesE2EDataset(NuScenesDataset):
             mask = info['valid_flag']
         else:
             mask = info['num_lidar_pts'] > 0
-        gt_bboxes_3d = info['gt_boxes'][mask]
+        gt_bboxes_3d = info['gt_boxes'][mask]    # 这个info是从pkl文件中加载的，create_data.py中生成的
         gt_names_3d = info['gt_names'][mask]
         gt_inds = info['gt_inds'][mask]
 
@@ -360,7 +360,7 @@ class NuScenesE2EDataset(NuScenesDataset):
             info['token'], ann_tokens)
 
         sdc_vel = self.traj_api.sdc_vel_info[info['token']]
-        gt_sdc_bbox, gt_sdc_label = self.traj_api.generate_sdc_info(sdc_vel)
+        gt_sdc_bbox, gt_sdc_label = self.traj_api.generate_sdc_info(sdc_vel)  # 这个的作用是啥？
         gt_sdc_fut_traj, gt_sdc_fut_traj_mask = self.traj_api.get_sdc_traj_label(
             info['token'])
 

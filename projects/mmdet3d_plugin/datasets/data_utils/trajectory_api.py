@@ -148,8 +148,12 @@ class NuScenesTraj(object):
 
     def generate_sdc_info(self, sdc_vel, as_lidar_instance3d_box=False):
         # sdc dim from https://forum.nuscenes.org/t/dimensions-of-the-ego-vehicle-used-to-gather-data/550
-        # TODO(box3d): we have changed yaw to mmdet3d 1.0.0rc6 format, wlh->lwh -pi->0.5pi
-        psudo_sdc_bbox = np.array([0.0, 0.0, 0.0, 4.08, 1.73, 1.56, 0.5*np.pi])
+        # TODO(box3d): we have changed yaw to mmdet3d 1.0.0rc6 format, wlh->lwh  [DONE]
+        # 表示自动驾驶车辆（SDC, Self-Driving Car）的伪造3D边界框，使车辆朝x方向，yaw=0
+        # 4. nuScenes 官方约定
+        # 自车坐标系中，自车朝向为 0（朝 X 轴正方向）
+        # 其他车辆朝向为相对自车的角度
+        psudo_sdc_bbox = np.array([0.0, 0.0, 0.0, 4.08, 1.73, 1.56, 0.0])
         if self.with_velocity:
             psudo_sdc_bbox = np.concatenate([psudo_sdc_bbox, sdc_vel], axis=-1)
         gt_bboxes_3d = np.array([psudo_sdc_bbox]).astype(np.float32)

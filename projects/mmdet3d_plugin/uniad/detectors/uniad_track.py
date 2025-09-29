@@ -554,7 +554,7 @@ class UniADTrack(MVXTwoStageDetector):
             all_matched_idxes = []
             all_instances_pred_logits = []
             all_instances_pred_boxes = []
-            frame_res = self._forward_single_frame_train(
+            frame_res = self._forward_single_frame_train(   # 从bevformer中直接得到tracking的结果，而不是bbox
                 img_single,
                 img_metas_single,
                 track_instances,

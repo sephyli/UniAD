@@ -8,7 +8,7 @@ CFG=$1                                               #
 CKPT=$2                                              #
 GPUS=$3                                              #    
 # -------------------------------------------------- #
-if [ $GPUS < 8 ]; then
+if [ $GPUS -lt 8 ]; then
     GPUS_PER_NODE=$GPUS
 else
     GPUS_PER_NODE=8

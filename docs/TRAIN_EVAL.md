@@ -45,6 +45,15 @@ The first-stage training takes ~ 50 GB GPU memory, ~ 2 days for 6 epochs on 8 A1
 
 The second-stage training takes ~ 17 GB GPU memory, ~ 4 days for 20 epochs on 8 A100 GPUs.
 * **NOTE**: Compared to the first-stage, much less GPU memory is required because we freeze the BEV encoder in this stage to focus on learning task-specific queries. Due to this, you can run the second-stage training on V100 or 3090 devices. -->
+### Bevformer Backbone Training
+we integrated BEVFormer training (you also can use other BEV backbone) into the UniAD code repository in this version.
+```shell
+# Training
+./tools/uniad_dist_train.sh ./projects/configs/bevformer/bevformer_base.py N_GPUS
+
+# Evaluation
+./tools/uniad_dist_train.sh ./projects/configs/bevformer/bevformer_base.py UniAD/ckpts/bevformer_r101_dcn_24ep.pth N_GPUS
+```
 
 
 ### Training Command
