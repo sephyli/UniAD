@@ -124,6 +124,9 @@ class AgentPredictionData:
             label=pred_label,
             score=pred_score
         )
+        # 1.56：SDC 车辆高度（米）
+        # -1.2：地面相对参考平面的高度（米）
+        # 1.56/2 = 0.78：车辆高度的一半  保证车辆底部贴地
         if is_sdc:
             self.pred_center = [0, 0, -1.2+1.56/2]
         self.is_sdc = is_sdc

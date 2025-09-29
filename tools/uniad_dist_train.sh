@@ -17,6 +17,7 @@ RANK=${RANK:-0}
 WORK_DIR=$(echo ${CFG%.*} | sed -e "s/configs/work_dirs/g")/
 # Intermediate files and logs will be saved to UniAD/projects/work_dirs/
 
+export CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7
 if [ ! -d ${WORK_DIR}logs ]; then
     mkdir -p ${WORK_DIR}logs
 fi
@@ -30,6 +31,7 @@ python -m torch.distributed.run \
     --node_rank=${RANK} \
     $(dirname "$0")/train.py \
     $CFG \
+    --launcher pytorch \
     ${@:3} \
     --deterministic \
     --work-dir ${WORK_DIR} \
