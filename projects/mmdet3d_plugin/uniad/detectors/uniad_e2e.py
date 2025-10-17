@@ -163,7 +163,7 @@ class UniAD(UniADTrack):
         losses_track, outs_track = self.forward_track_train(img, gt_bboxes_3d, gt_labels_3d, gt_past_traj, gt_past_traj_mask, gt_inds, gt_sdc_bbox, gt_sdc_label,
                                                         l2g_t, l2g_r_mat, img_metas, timestamp)
         losses_track = self.loss_weighted_and_prefixed(losses_track, prefix='track')
-        losses.update(losses_track)
+        losses.update(losses_track)   # 记录track_loss
         
         # Upsample bev for tiny version
         outs_track = self.upsample_bev_if_tiny(outs_track)
@@ -179,7 +179,7 @@ class UniAD(UniADTrack):
                                                           gt_lane_labels, gt_lane_bboxes, gt_lane_masks)
             
             losses_seg = self.loss_weighted_and_prefixed(losses_seg, prefix='map')
-            losses.update(losses_seg)
+            losses.update(losses_seg)   # 更新map loss
 
         outs_motion = dict()
         # Forward Motion Head
@@ -192,7 +192,7 @@ class UniAD(UniADTrack):
                                                     )
             losses_motion = ret_dict_motion["losses"]
             outs_motion = ret_dict_motion["outs_motion"]
-            outs_motion['bev_pos'] = bev_pos
+            outs_motion['bev_pos'] = bev_pos   # the bev_pos is come from bevformer
             losses_motion = self.loss_weighted_and_prefixed(losses_motion, prefix='motion')
             losses.update(losses_motion)
 
@@ -205,11 +205,11 @@ class UniAD(UniADTrack):
                 outs_motion['traj_query'] = torch.zeros((3, 1, 1, 6, 256)).to(bev_embed)
                 outs_motion['all_matched_idxes'] = [[-1]]
             losses_occ = self.occ_head.forward_train(
-                            bev_embed, 
-                            outs_motion, 
-                            gt_inds_list=gt_inds,
-                            gt_segmentation=gt_segmentation,
-                            gt_instance=gt_instance,
+                            bev_embed,                        # [200*200, batch_size, dim]
+                            outs_motion,                      # dict_keys(['all_traj_scores', 'all_traj_preds', 'valid_traj_masks', 'traj_query', 'track_query', 'track_query_pos', 'sdc_traj_query', 'sdc_track_query', 'sdc_track_query_pos', 'all_matched_idxes', 'bev_pos'])
+                            gt_inds_list=gt_inds,             # ground truth indices
+                            gt_segmentation=gt_segmentation,  # [batch_size, agent_number, 200, 200]  
+                            gt_instance=gt_instance,          # [batch_size, agent_number, 200, 200]    BEV图中所有agent的segmentation mask
                             gt_img_is_valid=gt_occ_img_is_valid,
                         )
             losses_occ = self.loss_weighted_and_prefixed(losses_occ, prefix='occ')

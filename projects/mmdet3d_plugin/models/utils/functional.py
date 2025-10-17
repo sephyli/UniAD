@@ -89,21 +89,28 @@ def anchor_coordinate_transform(anchors, bbox_results, with_translation_transfor
         torch.Tensor: A tensor containing the transformed anchor coordinates.
     """
     batch_size = len(bbox_results)
+    # import pickle
+    # with open('anchor.pkl', 'wb') as f:
+    #     pickle.dump(anchors, f)   
+    # with open('bbox_results.pkl', 'wb') as f:
+    #     pickle.dump(bbox_results, f)
     batched_anchors = []
     transformed_anchors = anchors[None, ...] # expand num agents: num_groups, num_modes, 12, 2 -> 1, ...
     for i in range(batch_size):
         bboxes, scores, labels, bbox_index, mask = bbox_results[i]
         yaw = bboxes.yaw.to(transformed_anchors.device)
-        bbox_centers = bboxes.gravity_center.to(transformed_anchors.device)
-        if with_rotation_transform: 
-            # TODO(box3d): we have changed yaw to mmdet3d 1.0.0rc6 format, maybe we should change this.
-            angle = yaw - 3.1415953 # num_agents, 1
-            rot_yaw = rot_2d(angle) # num_agents, 2, 2
+        bbox_centers = bboxes.gravity_center.to(transformed_anchors.device)  # bbox坐标中心点(bboxes为global坐标系下)
+        if with_rotation_transform:   # 旋转变换
+            # TODO(box3d): we have changed yaw to mmdet3d 1.0.0rc6 format, maybe we should change this.[Done]
+            # angle = yaw - torch.pi
+            # angle = yaw - torch.pi / 2 # num_agents, 1
+            angle = yaw
+            rot_yaw = rot_2d(angle) # num_agents, 2, 2  计算旋转矩阵
             rot_yaw = rot_yaw[:, None, None,:, :] # num_agents, 1, 1, 2, 2
             transformed_anchors = rearrange(transformed_anchors, 'b g m t c -> b g m c t')  # 1, num_groups, num_modes, 12, 2 -> 1, num_groups, num_modes, 2, 12
             transformed_anchors = torch.matmul(rot_yaw, transformed_anchors)# -> num_agents, num_groups, num_modes, 12, 2
             transformed_anchors = rearrange(transformed_anchors, 'b g m c t -> b g m t c')
-        if with_translation_transform:
+        if with_translation_transform:   # 平移变换
             transformed_anchors = bbox_centers[:, None, None, None, :2] + transformed_anchors
         batched_anchors.append(transformed_anchors)
     return torch.stack(batched_anchors)
@@ -123,6 +130,11 @@ def trajectory_coordinate_transform(trajectory, bbox_results, with_translation_t
     """
     batch_size = len(bbox_results)
     batched_trajectories = []
+    # import pickle
+    # with open('trajectory.pkl', 'wb') as f:
+    #     pickle.dump(trajectory, f)   
+    # with open('bbox_results2.pkl', 'wb') as f:
+    #     pickle.dump(bbox_results, f)
     for i in range(batch_size):
         bboxes, scores, labels, bbox_index, mask = bbox_results[i]
         yaw = bboxes.yaw.to(trajectory.device)
@@ -130,8 +142,10 @@ def trajectory_coordinate_transform(trajectory, bbox_results, with_translation_t
         transformed_trajectory = trajectory[i,...]
         if with_rotation_transform:
             # we take negtive here, to reverse the trajectory back to ego centric coordinate
-            # TODO(box3d): we have changed yaw to mmdet3d 1.0.0rc6 format, maybe we should change this.
-            angle = -(yaw - 3.1415953) 
+            # TODO(box3d): we have changed yaw to mmdet3d 1.0.0rc6 format, maybe we should change this. [DONE]
+            # angle = -(yaw - torch.pi)
+            # angle = -(yaw - torch.pi/2)
+            angle = -yaw  
             rot_yaw = rot_2d(angle)
             rot_yaw = rot_yaw[:,None, None,:, :] # A, 1, 1, 2, 2
             transformed_trajectory = rearrange(transformed_trajectory, 'a g p t c -> a g p c t') # A, G, P, 12 ,2 -> # A, G, P, 2, 12

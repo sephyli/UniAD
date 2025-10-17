@@ -176,7 +176,7 @@ class LoadAnnotations3D_E2E(LoadAnnotations3D):
         return results 
   
     def _load_ins_inds_3d(self, results):
-        ann_gt_inds = results['ann_info']['gt_inds'].copy() # TODO: note here
+        ann_gt_inds = results['ann_info']['gt_inds'].copy() # TODO: note here [Done]
 
         # NOTE: Avoid gt_inds generated twice
         results['ann_info'].pop('gt_inds')

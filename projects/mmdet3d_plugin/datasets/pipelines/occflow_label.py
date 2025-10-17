@@ -131,7 +131,7 @@ class GenerateOccFlowLabels(object):
                     vehicle_mask = np.isin(gt_labels_3d, self.filter_cls_ids)
                     ref_bboxes_3d = ref_bboxes_3d[vehicle_mask]
                     gt_labels_3d = gt_labels_3d[vehicle_mask]
-                    ins_inds      = ins_inds[vehicle_mask]
+                    ins_inds = ins_inds[vehicle_mask]
                     if vis_tokens is not None:
                         vis_tokens = vis_tokens[vehicle_mask]
 
