@@ -151,6 +151,8 @@ class BEVFormerTrackHead(DETRHead):
             bev_queries,
             self.bev_h,
             self.bev_w,
+            self.real_h,
+            self.real_w,
             grid_length=(self.real_h / self.bev_h,
                          self.real_w / self.bev_w),
             bev_pos=bev_pos,
