@@ -46,7 +46,7 @@ _dim_half_ = _pos_dim_
 canvas_size = (bev_h_, bev_w_)
 
 # NOTE: You can change queue_length from 5 to 3 to save GPU memory, but at risk of performance drop.
-queue_length = 1  # each sequence contains `queue_length` frames. Reduced to 1 to save memory
+queue_length = 5    # related to the training time
 
 ### traj prediction args ###
 predict_steps = 12
@@ -431,7 +431,7 @@ train_pipeline = [
 ]
 test_pipeline = [
     dict(type='LoadMultiViewImageFromFilesInCeph', to_float32=True,
-            file_client_args=file_client_args, img_root=data_root),
+            file_client_args=file_client_args, img_root=""),
     dict(type="NormalizeMultiviewImage", **img_norm_cfg),
     dict(type="PadMultiViewImage", size_divisor=32),
     dict(type='LoadAnnotations3D_E2E', 
@@ -587,3 +587,4 @@ checkpoint_config = dict(interval=1)
 load_from = "ckpts/bevformer_r101_dcn_24ep.pth"
 
 find_unused_parameters = True
+logger_name = 'mmdet'

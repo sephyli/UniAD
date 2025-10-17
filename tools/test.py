@@ -24,12 +24,12 @@ import os.path as osp
 warnings.filterwarnings("ignore")
 
 # debug
-# import debugpy
-# #保证host和端口一致，listen可以只设置端口。则为localhost,否则设置成(host,port)
-# debugpy.listen(17171)
-# print('wait debugger')
-# debugpy.wait_for_client()
-# print("Debugger Attached")
+import debugpy
+#保证host和端口一致，listen可以只设置端口。则为localhost,否则设置成(host,port)
+debugpy.listen(17171)
+print('wait debugger')
+debugpy.wait_for_client()
+print("Debugger Attached")
 
 def parse_args():
     parser = argparse.ArgumentParser(
@@ -237,7 +237,7 @@ def main():
             device_ids=[torch.cuda.current_device()],
             broadcast_buffers=False)
         outputs = custom_multi_gpu_test(model, data_loader, args.tmpdir,
-                                        args.gpu_collect)
+                                        args.gpu_collect)   # args.gpu_collect=False
 
     rank, _ = get_dist_info()
     if rank == 0:

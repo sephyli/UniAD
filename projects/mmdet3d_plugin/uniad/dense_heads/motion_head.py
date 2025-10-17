@@ -42,7 +42,7 @@ class MotionHead(BaseMotionHead):
     """
     def __init__(self,
                  *args,
-                 predict_steps=12,
+                 predict_steps=12,  # 轨迹预测的步数
                  transformerlayers=None,
                  bbox_coder=None,
                  num_cls_fcs=2,
@@ -237,13 +237,13 @@ class MotionHead(BaseMotionHead):
         
         dtype = track_query.dtype
         device = track_query.device
-        num_groups = self.kmeans_anchors.shape[0]
+        num_groups = self.kmeans_anchors.shape[0]   # self.kmeans_anchors ----> motion anchors
 
         # extract the last frame of the track query
-        track_query = track_query[:, -1]
+        track_query = track_query[:, -1]   # [1, 1, 7, 256] (B, num_dec, A_track, D) ----> [1, 7, 256] (num_dec, A_track, D)
         
         # encode the center point of the track query
-        reference_points_track = self._extract_tracking_centers(
+        reference_points_track = self._extract_tracking_centers(   # 将bbox的中心点压缩到(0,1)之间
             track_bbox_results, self.pc_range)
         track_query_pos = self.boxes_query_embedding_layer(pos2posemb2d(reference_points_track.to(device)))  # B, A, D
         
@@ -253,7 +253,7 @@ class MotionHead(BaseMotionHead):
         learnable_query_pos = torch.stack(torch.split(learnable_query_pos, self.num_anchor, dim=0))
 
         # construct the agent level/scene-level query positional embedding 
-        # (num_groups, num_anchor, 12, 2)
+        # (num_groups, num_anchor, 12, 2)  scene-centric manner， self.kmeans_anchors是motion_anchor，表示4 group, 6 anchor， 12 steps, 2means x, y
         # to incorporate the information of different groups and coordinates, and embed the headding and location information
         agent_level_anchors = self.kmeans_anchors.to(dtype).to(device).view(num_groups, self.num_anchor, self.predict_steps, 2).detach()
         scene_level_ego_anchors = anchor_coordinate_transform(agent_level_anchors, track_bbox_results, with_translation_transform=True)  # B, A, G, P ,12 ,2
@@ -261,7 +261,7 @@ class MotionHead(BaseMotionHead):
 
         agent_level_norm = norm_points(agent_level_anchors, self.pc_range)
         scene_level_ego_norm = norm_points(scene_level_ego_anchors, self.pc_range)
-        scene_level_offset_norm = norm_points(scene_level_offset_anchors, self.pc_range)
+        scene_level_offset_norm = norm_points(scene_level_offset_anchors, self.pc_range)  # 全都降维到0-1
 
         # we only use the last point of the anchor
         agent_level_embedding = self.agent_level_embedding_layer(
@@ -472,9 +472,14 @@ class MotionHead(BaseMotionHead):
             matched_gt_fut_traj_mask = gt_fut_traj_mask[i][matched_gt_idx][valid_traj_masks]
             if self.use_nonlinear_optimizer:
                 # TODO: sdc query is not supported non-linear optimizer
-                bboxes = track_bbox_results[i][0].tensor[valid_traj_masks]
-                matched_gt_bboxes_3d = gt_bboxes_3d[i][-1].tensor[matched_gt_idx[:-1]
-                                                                  ][valid_traj_masks[:-1]]
+                # bboxes = track_bbox_results[i][0].tensor[valid_traj_masks]
+                bboxes = track_bbox_results[i][0].tensor[:len(valid_traj_masks)].to(valid_traj_masks.device)[valid_traj_masks]
+                # matched_gt_bboxes_3d = gt_bboxes_3d[i][-1].tensor[matched_gt_idx[:-1]
+                #                                                   ][valid_traj_masks[:-1]]
+                matched_tensor = gt_bboxes_3d[i][-1].tensor
+                matched_indices = matched_gt_idx[:-1]
+                valid_masks = valid_traj_masks[:-1]
+                matched_gt_bboxes_3d = matched_tensor.to(valid_masks.device)[matched_indices.to(valid_masks.device)][valid_masks]
                 sdc_gt_fut_traj = matched_gt_fut_traj[-1:]
                 sdc_gt_fut_traj_mask = matched_gt_fut_traj_mask[-1:]
                 matched_gt_fut_traj = matched_gt_fut_traj[:-1]

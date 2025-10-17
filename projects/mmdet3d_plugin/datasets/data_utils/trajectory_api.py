@@ -42,7 +42,7 @@ class NuScenesTraj(object):
             box = boxes[i]
             instance_token = self.nusc.get('sample_annotation', ann_token)['instance_token']
             fut_traj_local = self.predict_helper.get_future_for_agent(instance_token, sample_token, seconds=6, in_agent_frame=True)
-            past_traj_local = self.predict_helper.get_past_for_agent(instance_token, sample_token, seconds=2, in_agent_frame=True)
+            past_traj_local = self.predict_helper.get_past_for_agent(instance_token, sample_token, seconds=2, in_agent_frame=True)  # 获取local坐标系下的轨迹 (以该车为中心)
 
             fut_traj = np.zeros((self.predict_steps, 2))
             fut_traj_valid_mask = np.zeros((self.predict_steps, 2))
@@ -53,7 +53,7 @@ class NuScenesTraj(object):
                     trans = box.center
                 else:
                     trans = np.array([0, 0, 0])
-                rot = Quaternion(matrix=box.rotation_matrix)
+                rot = Quaternion(matrix=box.rotation_matrix)  # rot.yaw_pitch_roll[0]
                 fut_traj_scence_centric = convert_local_coords_to_global(fut_traj_local, trans, rot) 
                 fut_traj[:fut_traj_scence_centric.shape[0], :] = fut_traj_scence_centric
                 fut_traj_valid_mask[:fut_traj_scence_centric.shape[0], :] = 1
@@ -148,12 +148,14 @@ class NuScenesTraj(object):
 
     def generate_sdc_info(self, sdc_vel, as_lidar_instance3d_box=False):
         # sdc dim from https://forum.nuscenes.org/t/dimensions-of-the-ego-vehicle-used-to-gather-data/550
-        # TODO(box3d): we have changed yaw to mmdet3d 1.0.0rc6 format, wlh->lwh  [DONE]
+        # TODO(box3d): we have changed yaw to mmdet3d 1.0.0rc6 format [DONE]
         # 表示自动驾驶车辆（SDC, Self-Driving Car）的伪造3D边界框，使车辆朝x方向，yaw=0
         # 4. nuScenes 官方约定
         # 自车坐标系中，自车朝向为 0（朝 X 轴正方向）
         # 其他车辆朝向为相对自车的角度
-        psudo_sdc_bbox = np.array([0.0, 0.0, 0.0, 4.08, 1.73, 1.56, 0.0])
+        # 自车只有是wlh才符合nuscenes定义
+        # psudo_sdc_bbox = np.array([0.0, 0.0, 0.0, 1.73, 4.08, 1.56, -np.pi])
+        psudo_sdc_bbox = np.array([0.0, 0.0, 0.0, 4.08, 1.73, 1.56, 0.5*np.pi])
         if self.with_velocity:
             psudo_sdc_bbox = np.concatenate([psudo_sdc_bbox, sdc_vel], axis=-1)
         gt_bboxes_3d = np.array([psudo_sdc_bbox]).astype(np.float32)

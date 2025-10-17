@@ -237,3 +237,55 @@ def collect_results_cpu(result_part, size, tmpdir=None):
 
 def collect_results_gpu(result_part, size):
     collect_results_cpu(result_part, size)
+    # """Collect results from all ranks using GPU communication."""
+    # rank, world_size = get_dist_info()
+    
+    # # Serialize results to bytes
+    # if not result_part:
+    #     result_bytes = b''
+    # else:
+    #     result_bytes = pickle.dumps(result_part)
+    
+    # # Check if data is too large for GPU communication
+    # max_gpu_size = 100 * 1024 * 1024  # 100MB limit
+    # if len(result_bytes) > max_gpu_size:
+    #     # Fall back to CPU collection for large data
+    #     print(f"Warning: Result size {len(result_bytes)} bytes exceeds GPU limit, falling back to CPU collection")
+    #     return collect_results_cpu(result_part, size, tmpdir=None)
+    
+    # # Convert to tensor and pad to same size across all ranks
+    # result_tensor = torch.tensor(list(result_bytes), dtype=torch.uint8, device='cuda')
+    
+    # # Get the maximum size across all ranks
+    # size_tensor = torch.tensor([result_tensor.numel()], dtype=torch.long, device='cuda')
+    # gathered_sizes = [torch.zeros_like(size_tensor) for _ in range(world_size)]
+    # dist.all_gather(gathered_sizes, size_tensor)
+    
+    # max_size = max(tensor.item() for tensor in gathered_sizes)
+    
+    # # Pad tensor to max_size to ensure all ranks have same tensor size
+    # if result_tensor.numel() < max_size:
+    #     padding = torch.zeros(max_size - result_tensor.numel(), dtype=torch.uint8, device='cuda')
+    #     result_tensor = torch.cat([result_tensor, padding])
+    
+    # # Gather all results from all ranks
+    # gathered_tensors = [torch.zeros_like(result_tensor) for _ in range(world_size)]
+    # dist.all_gather(gathered_tensors, result_tensor)
+    
+    # if rank != 0:
+    #     return None
+    
+    # # Deserialize and combine results
+    # ordered_results = []
+    # for i, tensor in enumerate(gathered_tensors):
+    #     actual_size = gathered_sizes[i].item()
+    #     if actual_size > 0:
+    #         # Only use the actual data, ignore padding
+    #         actual_tensor = tensor[:actual_size]
+    #         result_bytes = bytes(actual_tensor.cpu().numpy())
+    #         part_results = pickle.loads(result_bytes)
+    #         ordered_results.extend(part_results)
+    
+    # # Trim to correct size
+    # ordered_results = ordered_results[:size]
+    # return ordered_results

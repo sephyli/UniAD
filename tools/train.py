@@ -25,12 +25,12 @@ from mmseg import __version__ as mmseg_version
 warnings.filterwarnings("ignore")
 
 from mmcv.utils import TORCH_VERSION, digit_version
-# import debugpy
-# #保证host和端口一致，listen可以只设置端口。则为localhost,否则设置成(host,port)
-# debugpy.listen(17171)
-# print('wait debugger')
-# debugpy.wait_for_client()
-# print("Debugger Attached")
+import debugpy
+#保证host和端口一致，listen可以只设置端口。则为localhost,否则设置成(host,port)
+debugpy.listen(17171)
+print('wait debugger')
+debugpy.wait_for_client()
+print("Debugger Attached")
 
 def parse_args():
     parser = argparse.ArgumentParser(description='Train a detector')
@@ -181,11 +181,12 @@ def main():
     log_file = osp.join(cfg.work_dir, f'{timestamp}.log')
     # specify logger name, if we still use 'mmdet', the output info will be
     # filtered and won't be saved in the log_file
-    # TODO: ugly workaround to judge whether we are training det or seg model
-    if cfg.model.type in ['EncoderDecoder3D']:
-        logger_name = 'mmseg'
-    else:
-        logger_name = 'mmdet'
+    # TODO: ugly workaround to judge whether we are training det or seg model [Done]
+    logger_name = cfg.get('logger_name', 'mmdet')
+    # if cfg.model.type in ['EncoderDecoder3D']:
+    #     logger_name = 'mmseg'
+    # else:
+    #     logger_name = 'mmdet'
     logger = get_root_logger(
         log_file=log_file, log_level=cfg.log_level, name=logger_name)
 

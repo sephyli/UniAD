@@ -320,7 +320,7 @@ def _fill_trainval_infos(nusc,
             future_traj_all, future_traj_valid_mask_all = _get_future_traj_info(nusc, sample)
             instance_tokens = [ann['instance_token'] for ann in annotations]  # dtype('<U[length_of_str]')
 
-            # TODO: Add traj in next dataset_version
+            # TODO: Add traj in next dataset_version [Done]
             # future_traj_all, future_traj_valid_mask_all = _get_future_traj_info(nusc, sample)
             # convert velo from global to lidar
             for i in range(len(boxes)):
@@ -336,6 +336,7 @@ def _fill_trainval_infos(nusc,
             names = np.array(names)
             # instance_inds = [nusc.getind('instance', ann['instance_token']) for ann in annotations]
             # TODO(box3d): convert gt_boxes to mmdet3d 1.0.0rc6 LiDARInstance3DBoxes format. [DONE]
+            # gt_boxes = np.concatenate([locs, dims, -rots - np.pi / 2], axis=1)
             # gt_boxes = np.concatenate([locs, dims, rots], axis=1)
             gt_boxes = np.concatenate([locs, dims[:, [1, 0, 2]], rots], axis=1)
             assert len(gt_boxes) == len(

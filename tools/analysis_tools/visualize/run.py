@@ -20,6 +20,12 @@ from tools.analysis_tools.visualize.utils import color_mapping, AgentPredictionD
 from tools.analysis_tools.visualize.render.bev_render import BEVRender
 from tools.analysis_tools.visualize.render.cam_render import CameraRender
 
+import debugpy
+#保证host和端口一致，listen可以只设置端口。则为localhost,否则设置成(host,port)
+debugpy.listen(17171)
+print('wait debugger')
+debugpy.wait_for_client()
+print("Debugger Attached")
 
 class Visualizer:
     """
@@ -288,13 +294,13 @@ def main(args):
         with_planning=True,
         with_pred_box=True,
         with_pred_traj=True,
-        show_gt_boxes=False,
+        show_gt_boxes=True,
         show_lidar=False,
         show_command=True,
         show_hd_map=False,
         show_sdc_car=True,
         show_legend=True,
-        show_sdc_traj=False
+        show_sdc_traj=True
     )
 
     viser = Visualizer(version='v1.0-mini', predroot=args.predroot, dataroot='data/nuscenes', **render_cfg)
