@@ -98,7 +98,7 @@ class BEVFormerEncoder(TransformerLayerSequence):
         reference_points = reference_points.clone()
 
         reference_points[..., 0:1] = reference_points[..., 0:1] * \
-            (pc_range[3] - pc_range[0]) + pc_range[0]
+            (pc_range[3] - pc_range[0]) + pc_range[0]  # 将参考点放到感知范围中
         reference_points[..., 1:2] = reference_points[..., 1:2] * \
             (pc_range[4] - pc_range[1]) + pc_range[1]
         reference_points[..., 2:3] = reference_points[..., 2:3] * \
@@ -190,8 +190,9 @@ class BEVFormerEncoder(TransformerLayerSequence):
             ref_3d, self.pc_range, img_metas)
 
         # bug: this code should be 'shift_ref_2d = ref_2d.clone()', we keep this bug for reproducing our results in paper.
-        shift_ref_2d = ref_2d  # .clone()
-        shift_ref_2d += shift[:, None, None, :]
+        # TODO(zzh)：修复该bug, ref_2d用于时间自注意力 [Done]
+        shift_ref_2d = ref_2d.clone()
+        shift_ref_2d += shift[:, None, None, :]   # 如果不加.clone()的话，原始的ref_2d会被改变
 
         # (num_query, bs, embed_dims) -> (bs, num_query, embed_dims)
         bev_query = bev_query.permute(1, 0, 2)
