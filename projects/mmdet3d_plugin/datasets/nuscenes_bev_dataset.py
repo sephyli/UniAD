@@ -103,6 +103,15 @@ class CustomNuScenesDataset(NuScenesDataset):
                 - ann_info (dict): Annotation info.
         """
         info = self.data_infos[index]
+        l2e_r = info['lidar2ego_rotation']
+        l2e_t = info['lidar2ego_translation']
+        e2g_r = info['ego2global_rotation']
+        e2g_t = info['ego2global_translation']
+        l2e_r_mat = Quaternion(l2e_r).rotation_matrix
+        e2g_r_mat = Quaternion(e2g_r).rotation_matrix
+
+        l2g_r_mat = l2e_r_mat.T @ e2g_r_mat.T   # lidar to global rotation matrix
+        l2g_t = l2e_t @ e2g_r_mat.T + e2g_t     # lidar to global translation matrix
         # standard protocal modified from SECOND.Pytorch
         input_dict = dict(
             sample_idx=info['token'],
@@ -110,6 +119,8 @@ class CustomNuScenesDataset(NuScenesDataset):
             sweeps=info['sweeps'],
             ego2global_translation=info['ego2global_translation'],
             ego2global_rotation=info['ego2global_rotation'],
+            l2g_r_mat = l2g_r_mat,
+            l2g_t = l2g_t,
             prev_idx=info['prev'],
             next_idx=info['next'],
             scene_token=info['scene_token'],

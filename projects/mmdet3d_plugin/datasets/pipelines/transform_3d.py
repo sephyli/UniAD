@@ -252,7 +252,7 @@ class CustomCollect3D(object):
                             'img_norm_cfg', 'pcd_trans', 'sample_idx', 'prev_idx', 'next_idx',
                             'pcd_scale_factor', 'pcd_rotation', 'pts_filename',
                             'transformation_3d_flow', 'scene_token',
-                            'can_bus',
+                            'can_bus','l2g_r_mat'
                             )):
         self.keys = keys
         self.meta_keys = meta_keys

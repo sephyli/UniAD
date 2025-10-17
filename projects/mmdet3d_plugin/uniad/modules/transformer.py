@@ -19,6 +19,7 @@ from .temporal_self_attention import TemporalSelfAttention
 from .spatial_cross_attention import MSDeformableAttention3D
 from .decoder import CustomMSDeformableAttention
 from mmcv.runner import force_fp32, auto_fp16
+from nuscenes.utils.data_classes import Quaternion
 
 @TRANSFORMER.register_module()
 class PerceptionTransformer(BaseModule):
@@ -103,6 +104,8 @@ class PerceptionTransformer(BaseModule):
             bev_queries,
             bev_h,
             bev_w,
+            real_h,
+            real_w,
             grid_length=[0.512, 0.512],
             bev_pos=None,
             prev_bev=None,
@@ -115,27 +118,37 @@ class PerceptionTransformer(BaseModule):
         bev_queries = bev_queries.unsqueeze(1).repeat(1, bs, 1)
         bev_pos = bev_pos.flatten(2).permute(2, 0, 1)
         # obtain rotation angle and shift with ego motion
-        delta_x = np.array([each['can_bus'][0]
-                           for each in img_metas])
-        delta_y = np.array([each['can_bus'][1]
-                           for each in img_metas])
-        # print(f'\n delta_x: {delta_x} and delta_y: {delta_y}')
-        ego_angle = np.array(
-            [each['can_bus'][-2] / np.pi * 180 for each in img_metas])
-        grid_length_y = grid_length[0]
-        grid_length_x = grid_length[1]
-        translation_length = np.sqrt(delta_x ** 2 + delta_y ** 2)
-        translation_angle = np.arctan2(delta_y, delta_x) / np.pi * 180
-        bev_angle = ego_angle - translation_angle
-        # TODO(zzh): 这里应该修改，推算出来，BEV的y向上，x向右 [Done]
+        delta_global = np.array([each['can_bus'][:3] for each in img_metas])
+        # Convert quaternion to rotation matrix
+        lidar2global_rotation = np.array([each['l2g_r_mat'] for each in img_metas])
+        delta_lidar = []
+        for i in range(bs): 
+            delta_lidar.append(np.linalg.inv(lidar2global_rotation[i]) @ delta_global[i])
+        
+        delta_lidar = np.array(delta_lidar)
+        shift_y = delta_lidar[:, 1] / real_h
+        shift_x = delta_lidar[:, 0] / real_w
+        # delta_x = np.array([each['can_bus'][0]
+        #                    for each in img_metas])
+        # delta_y = np.array([each['can_bus'][1]
+        #                    for each in img_metas])
+        # # print(f'\n delta_x: {delta_x} and delta_y: {delta_y}')
+        # ego_angle = np.array(
+        #     [each['can_bus'][-2] / np.pi * 180 for each in img_metas])
+        # grid_length_y = grid_length[0]
+        # grid_length_x = grid_length[1]
+        # translation_length = np.sqrt(delta_x ** 2 + delta_y ** 2)
+        # translation_angle = np.arctan2(delta_y, delta_x) / np.pi * 180
+        # bev_angle = ego_angle - translation_angle
+        # # TODO(zzh): 这里应该修改，推算出来，BEV的y向上，x向右 [Done]
+        # # shift_y = translation_length * \
+        # #     np.cos(bev_angle / 180 * np.pi) / grid_length_y / bev_h
+        # # shift_x = translation_length * \
+        # #     np.sin(bev_angle / 180 * np.pi) / grid_length_x / bev_w
         # shift_y = translation_length * \
-        #     np.cos(bev_angle / 180 * np.pi) / grid_length_y / bev_h
+        #     np.sin(bev_angle / 180 * np.pi) / grid_length_y / bev_h
         # shift_x = translation_length * \
-        #     np.sin(bev_angle / 180 * np.pi) / grid_length_x / bev_w
-        shift_y = translation_length * \
-            np.sin(bev_angle / 180 * np.pi) / grid_length_y / bev_h
-        shift_x = translation_length * \
-            np.cos(bev_angle / 180 * np.pi) / grid_length_x / bev_w
+        #     np.cos(bev_angle / 180 * np.pi) / grid_length_x / bev_w
         shift_y = shift_y * self.use_shift
         shift_x = shift_x * self.use_shift
         shift = bev_queries.new_tensor(
@@ -246,6 +259,8 @@ class PerceptionTransformer(BaseModule):
                 object_query_embed,
                 bev_h,
                 bev_w,
+                real_h,
+                real_w,
                 grid_length=[0.512, 0.512],
                 bev_pos=None,
                 reg_branches=None,
@@ -294,6 +309,8 @@ class PerceptionTransformer(BaseModule):
             bev_queries,
             bev_h,
             bev_w,
+            real_h,
+            real_w,
             grid_length=grid_length,
             bev_pos=bev_pos,
             prev_bev=prev_bev,
