@@ -226,7 +226,7 @@ class BEVFormer(MVXTwoStageDetector):
             prev_bev = None
         img_feats = self.extract_feat(img=img, img_metas=img_metas)
         losses = dict()
-        losses_pts = self.forward_pts_train(img_feats, gt_bboxes_3d,  # TODO(bbox3d): 这里用了gt_bboxes_3d查明
+        losses_pts = self.forward_pts_train(img_feats, gt_bboxes_3d,  # TODO(bbox3d): 这里用了gt_bboxes_3d查明 [Done-nothing]
                                             gt_labels_3d, img_metas,
                                             gt_bboxes_ignore, prev_bev)
 
