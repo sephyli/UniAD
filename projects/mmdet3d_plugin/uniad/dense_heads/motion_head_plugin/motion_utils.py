@@ -81,7 +81,7 @@ def nonlinear_smoother(gt_bboxes_3d, gt_fut_traj, gt_fut_traj_mask, bbox_tensor)
         reference_trajectory = np.concatenate(
             [gt_fut_traj[i], gt_fut_traj_yaw[i]], axis=-1)
         if ts > 1 and _is_dynamic(gt_fut_traj[i], int(ts), 2) and _check_diff(x_curr, reference_trajectory):
-            smoother = MotionNonlinearSmoother(  # 对运动轨迹做平滑处理
+            smoother = MotionNonlinearSmoother( 
                 trajectory_len=int(ts), dt=0.5)
             reference_trajectory = reference_trajectory[:int(ts)+1, :]
             smoother.set_reference_trajectory(x_curr, reference_trajectory)
@@ -96,7 +96,7 @@ def nonlinear_smoother(gt_bboxes_3d, gt_fut_traj, gt_fut_traj_mask, bbox_tensor)
                 traj_perturb_tmp = traj_perturb[1:,
                                                 :2] - traj_perturb[0:1, :2]
                 traj_perturb = np.zeros((12, 2))
-                traj_perturb[:traj_perturb_tmp.shape[0],  # 变成了以agent为中心的轨迹
+                traj_perturb[:traj_perturb_tmp.shape[0], 
                              :] = traj_perturb_tmp[:, :2]
                 perturb_count += 1
         else:

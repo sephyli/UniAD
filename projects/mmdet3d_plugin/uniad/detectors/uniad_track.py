@@ -451,7 +451,7 @@ class UniADTrack(MVXTwoStageDetector):
             track_instances.pred_boxes = output_coords[i, 0]  # [300, box_dim]
             track_instances.pred_past_trajs = output_past_trajs[i, 0]  # [300,past_steps, 2]
 
-            out["track_instances"] = track_instances   # 总共有901个track_instances 900 query + sdc
+            out["track_instances"] = track_instances 
             track_instances, matched_indices = self.criterion.match_for_single_frame(
                 out, i, if_step=(i == (nb_dec - 1))
             )
@@ -510,7 +510,7 @@ class UniADTrack(MVXTwoStageDetector):
         Args:
         Returns:
         """
-        track_instances = self._generate_empty_tracks()  # TODO(box3d)：检查这里的3d_box来源，结果有问题 [DONE]
+        track_instances = self._generate_empty_tracks()  
         num_frame = img.size(1)
         # init gt instances!
         gt_instances_list = []
@@ -554,7 +554,7 @@ class UniADTrack(MVXTwoStageDetector):
             all_matched_idxes = []
             all_instances_pred_logits = []
             all_instances_pred_boxes = []
-            frame_res = self._forward_single_frame_train(   # 从bevformer中直接得到tracking的结果，而不是bbox
+            frame_res = self._forward_single_frame_train(  
                 img_single,
                 img_metas_single,
                 track_instances,

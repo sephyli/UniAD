@@ -107,8 +107,7 @@ class PlanningMetric(Metric):
             )
             m1 = torch.logical_and(m1, torch.logical_not(gt_box_coll))
 
-            # ti = torch.arange(n_future)
-            # NOTE: 这里运行时出现设备不匹配的问题，【Done】
+            # NOTE: here we make the device of ti same as segmentation
             ti = torch.arange(n_future, device=segmentation.device)
             obj_coll_sum[ti[m1]] += segmentation[i, ti[m1], yi[m1], xi[m1]].long()
 

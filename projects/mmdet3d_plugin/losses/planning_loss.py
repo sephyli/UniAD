@@ -47,10 +47,10 @@ class CollisionLoss(nn.Module):
                 future_gt_bbox_corners = future_gt_bbox[i].corners[:, [0,3,4,7], :2] # (N, 8, 3) -> (N, 4, 2) only bev 
                 # sdc_yaw = -sdc_planning_gt[0, i, 2].to(sdc_traj_all.dtype) - 1.5708
                 sdc_yaw = sdc_planning_gt[0, i, 2].to(sdc_traj_all.dtype)
-                sdc_bev_box = self.to_corners([sdc_traj_all[0, i, 0], sdc_traj_all[0, i, 1], self.w, self.h, sdc_yaw])  # w 对应 w, h 对应 l
+                sdc_bev_box = self.to_corners([sdc_traj_all[0, i, 0], sdc_traj_all[0, i, 1], self.w, self.h, sdc_yaw])  
                 dump_sdc.append(sdc_bev_box.cpu().detach().numpy())
                 for j in range(future_gt_bbox_corners.shape[0]):
-                    inter_sum += self.inter_bbox(sdc_bev_box, future_gt_bbox_corners[j].to(sdc_traj_all.device))   # 计算两个bbox之间是否有交集 ---> 即碰撞
+                    inter_sum += self.inter_bbox(sdc_bev_box, future_gt_bbox_corners[j].to(sdc_traj_all.device))  
         return inter_sum * self.weight
         
     def inter_bbox(self, corners_a, corners_b):

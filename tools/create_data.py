@@ -4,12 +4,6 @@ import sys
 from data_converter import uniad_nuscenes_converter as nuscenes_converter
 sys.path.append('.')
 
-import debugpy
-#保证host和端口一致，listen可以只设置端口。则为localhost,否则设置成(host,port)
-debugpy.listen(17171)
-print('wait debugger')
-debugpy.wait_for_client()
-print("Debugger Attached")
 def nuscenes_data_prep(root_path,
                        can_bus_root_path,
                        info_prefix,

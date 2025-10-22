@@ -162,7 +162,6 @@ model = dict(
 # dataset_type = 'CustomNuScenesDataset'
 # dataset_type = 'NuScenesE2EDataset'
 # data_root = 'data/nuscenes/'
-# # 修改与uniad一致的数据路径
 # info_root = 'data/infos/'
 # file_client_args = dict(backend='disk')
 

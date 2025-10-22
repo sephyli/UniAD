@@ -204,7 +204,7 @@ class NuScenesE2EDataset(NuScenesDataset):
         frame_idx = input_dict['frame_idx']
         scene_token = input_dict['scene_token']
         self.pre_pipeline(input_dict)
-        example = self.pipeline(input_dict)  # 到这里没有问题
+        example = self.pipeline(input_dict) 
 
         assert example['gt_labels_3d'].data.shape[0] == example['gt_fut_traj'].shape[0]
         assert example['gt_labels_3d'].data.shape[0] == example['gt_past_traj'].shape[0]
@@ -275,7 +275,6 @@ class NuScenesE2EDataset(NuScenesDataset):
         gt_sdc_bbox_list = [each['gt_sdc_bbox'].data for each in queue]
         l2g_r_mat_list = [to_tensor(each['l2g_r_mat']) for each in queue]
         l2g_t_list = [to_tensor(each['l2g_t']) for each in queue]
-        # TODO(zzh): 修改数据类型 float64 [Done]
         # timestamp_list = [to_tensor(each['timestamp']) for each in queue]  
         timestamp_list = [torch.tensor([each["timestamp"]], dtype=torch.float64) for each in queue]  # L, 1
         gt_fut_traj = to_tensor(queue[-1]['gt_fut_traj'])
@@ -293,7 +292,6 @@ class NuScenesE2EDataset(NuScenesDataset):
             metas_map[i] = each['img_metas'].data
             if i == 0:
                 metas_map[i]['prev_bev'] = False
-                # TODO(zzh): check the can_bus，training 和 inference不同 [Done]
                 prev_pos = copy.deepcopy(metas_map[i]['can_bus'][:3])  
                 prev_angle = copy.deepcopy(metas_map[i]['can_bus'][-1])
                 metas_map[i]['can_bus'][:3] = 0
@@ -351,7 +349,7 @@ class NuScenesE2EDataset(NuScenesDataset):
             mask = info['valid_flag']
         else:
             mask = info['num_lidar_pts'] > 0
-        gt_bboxes_3d = info['gt_boxes'][mask]    # 这个info是从pkl文件中加载的，create_data.py中生成的
+        gt_bboxes_3d = info['gt_boxes'][mask] 
         gt_names_3d = info['gt_names'][mask]
         gt_inds = info['gt_inds'][mask]
 
@@ -363,7 +361,7 @@ class NuScenesE2EDataset(NuScenesDataset):
             info['token'], ann_tokens)
 
         sdc_vel = self.traj_api.sdc_vel_info[info['token']]
-        gt_sdc_bbox, gt_sdc_label = self.traj_api.generate_sdc_info(sdc_vel)  # 这个的作用是啥？   获取自车的信息
+        gt_sdc_bbox, gt_sdc_label = self.traj_api.generate_sdc_info(sdc_vel) 
         gt_sdc_fut_traj, gt_sdc_fut_traj_mask = self.traj_api.get_sdc_traj_label(
             info['token'])
 
@@ -433,9 +431,9 @@ class NuScenesE2EDataset(NuScenesDataset):
         info = self.data_infos[index]
 
         # semantic format
-        lane_info = self.lane_infos[index] if self.lane_infos else None # 没有车道信息
+        lane_info = self.lane_infos[index] if self.lane_infos else None 
         # panoptic format
-        location = self.nusc.get('log', self.nusc.get(   # 城市："singapore-onenorth" or Boston Seaport or Queenstown
+        location = self.nusc.get('log', self.nusc.get(  
             'scene', info['scene_token'])['log_token'])['location']
         vectors = self.vector_map.gen_vectorized_samples(location,
                                                          info['ego2global_translation'],
@@ -446,12 +444,12 @@ class NuScenesE2EDataset(NuScenesDataset):
                                                                                        self.map_num_classes,
                                                                                        self.thickness,
                                                                                        self.angle_class)
-        instance_masks = np.rot90(instance_masks, k=-1, axes=(1, 2))   # 为什么要旋转？ 坐标变换，Shapely ---> numpy
+        instance_masks = np.rot90(instance_masks, k=-1, axes=(1, 2)) 
         instance_masks = torch.tensor(instance_masks.copy())
         gt_labels = []
         gt_bboxes = []
         gt_masks = []
-        for cls in range(self.map_num_classes):   # 将像素级的地图掩码数据转换为目标检测任务所需的边界框标注数据。
+        for cls in range(self.map_num_classes):  
             for i in np.unique(instance_masks[cls]):
                 if i == 0:
                     continue
@@ -479,7 +477,6 @@ class NuScenesE2EDataset(NuScenesDataset):
         gt_labels = torch.tensor(gt_labels)
         gt_bboxes = torch.tensor(np.stack(gt_bboxes))
         gt_masks = torch.stack(gt_masks)
-        # 上面是在处理坐标系信息，将intance_masks和map_mask转换为边界框标注以及CV坐标系
         # standard protocal modified from SECOND.Pytorch
         input_dict = dict(
             sample_idx=info['token'],
@@ -545,7 +542,7 @@ class NuScenesE2EDataset(NuScenesDataset):
                     lidar2cam=lidar2cam_rts,
                 ))
 
-        # if not self.test_mode:  # TODO(zzh): 取消注释方可用test来进行测试获取标注信息
+        # if not self.test_mode: 
         annos = self.get_ann_info(index)
         input_dict['ann_info'] = annos
         if 'sdc_planning' in input_dict['ann_info'].keys():
@@ -553,7 +550,7 @@ class NuScenesE2EDataset(NuScenesDataset):
             input_dict['sdc_planning_mask'] = input_dict['ann_info']['sdc_planning_mask']
             input_dict['command'] = input_dict['ann_info']['command']
 
-        rotation = Quaternion(input_dict['ego2global_rotation'])  # 全局到自车的旋转
+        rotation = Quaternion(input_dict['ego2global_rotation']) 
         translation = input_dict['ego2global_translation']
         can_bus = input_dict['can_bus']
         can_bus[:3] = translation

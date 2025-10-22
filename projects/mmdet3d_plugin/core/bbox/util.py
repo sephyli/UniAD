@@ -1,13 +1,11 @@
 import torch 
 
-# TODO(3dbox): 这里需要修正, 对数值倒是没有影响，其顺序完全由外部给的bboxes来决定 [Done]
+# NOTE: we fixed box dim in here, wlh ---> lwh
 def normalize_bbox(bboxes, pc_range):
 
     cx = bboxes[..., 0:1]
     cy = bboxes[..., 1:2]
     cz = bboxes[..., 2:3]
-    # w = bboxes[..., 3:4].log()
-    # l = bboxes[..., 4:5].log()
     l = bboxes[..., 3:4].log()
     w = bboxes[..., 4:5].log()
     h = bboxes[..., 5:6].log()
@@ -16,9 +14,6 @@ def normalize_bbox(bboxes, pc_range):
     if bboxes.size(-1) > 7:
         vx = bboxes[..., 7:8] 
         vy = bboxes[..., 8:9]
-        # normalized_bboxes = torch.cat(
-        #     (cx, cy, w, l, cz, h, rot.sin(), rot.cos(), vx, vy), dim=-1
-        # )
         normalized_bboxes = torch.cat(
             (cx, cy, l, w, cz, h, rot.sin(), rot.cos(), vx, vy), dim=-1
         )
@@ -40,9 +35,6 @@ def denormalize_bbox(normalized_bboxes, pc_range):
     cy = normalized_bboxes[..., 1:2]
     cz = normalized_bboxes[..., 4:5]
    
-    # size
-    # w = normalized_bboxes[..., 2:3]
-    # l = normalized_bboxes[..., 3:4]
     l = normalized_bboxes[..., 2:3]
     w = normalized_bboxes[..., 3:4]
     h = normalized_bboxes[..., 5:6]
