@@ -42,7 +42,7 @@ class MotionHead(BaseMotionHead):
     """
     def __init__(self,
                  *args,
-                 predict_steps=12,  # 轨迹预测的步数
+                 predict_steps=12, 
                  transformerlayers=None,
                  bbox_coder=None,
                  num_cls_fcs=2,
@@ -243,7 +243,7 @@ class MotionHead(BaseMotionHead):
         track_query = track_query[:, -1]   # [1, 1, 7, 256] (B, num_dec, A_track, D) ----> [1, 7, 256] (num_dec, A_track, D)
         
         # encode the center point of the track query
-        reference_points_track = self._extract_tracking_centers(   # 将bbox的中心点压缩到(0,1)之间
+        reference_points_track = self._extract_tracking_centers( 
             track_bbox_results, self.pc_range)
         track_query_pos = self.boxes_query_embedding_layer(pos2posemb2d(reference_points_track.to(device)))  # B, A, D
         
@@ -253,15 +253,13 @@ class MotionHead(BaseMotionHead):
         learnable_query_pos = torch.stack(torch.split(learnable_query_pos, self.num_anchor, dim=0))
 
         # construct the agent level/scene-level query positional embedding 
-        # (num_groups, num_anchor, 12, 2)  scene-centric manner， self.kmeans_anchors是motion_anchor，表示4 group, 6 anchor， 12 steps, 2means x, y
-        # to incorporate the information of different groups and coordinates, and embed the headding and location information
         agent_level_anchors = self.kmeans_anchors.to(dtype).to(device).view(num_groups, self.num_anchor, self.predict_steps, 2).detach()
         scene_level_ego_anchors = anchor_coordinate_transform(agent_level_anchors, track_bbox_results, with_translation_transform=True)  # B, A, G, P ,12 ,2
         scene_level_offset_anchors = anchor_coordinate_transform(agent_level_anchors, track_bbox_results, with_translation_transform=False)  # B, A, G, P ,12 ,2
 
         agent_level_norm = norm_points(agent_level_anchors, self.pc_range)
         scene_level_ego_norm = norm_points(scene_level_ego_anchors, self.pc_range)
-        scene_level_offset_norm = norm_points(scene_level_offset_anchors, self.pc_range)  # 全都降维到0-1
+        scene_level_offset_norm = norm_points(scene_level_offset_anchors, self.pc_range) 
 
         # we only use the last point of the anchor
         agent_level_embedding = self.agent_level_embedding_layer(

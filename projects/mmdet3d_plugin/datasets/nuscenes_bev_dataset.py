@@ -38,7 +38,7 @@ class CustomNuScenesDataset(NuScenesDataset):
         """
         queue = []
         index_list = list(range(index-self.queue_length, index))
-        random.shuffle(index_list)   # 随机剥离一帧，制造确实数据or难度，来增强鲁棒性
+        random.shuffle(index_list)  
         index_list = sorted(index_list[1:])
         index_list.append(index)
         for i in index_list:
@@ -66,7 +66,7 @@ class CustomNuScenesDataset(NuScenesDataset):
             if metas_map[i]['scene_token'] != prev_scene_token:
                 metas_map[i]['prev_bev_exists'] = False
                 prev_scene_token = metas_map[i]['scene_token']
-                prev_pos = copy.deepcopy(metas_map[i]['can_bus'][:3])   # TODO(zzh): check there [Done]
+                prev_pos = copy.deepcopy(metas_map[i]['can_bus'][:3])  
                 prev_angle = copy.deepcopy(metas_map[i]['can_bus'][-1])
                 metas_map[i]['can_bus'][:3] = 0
                 metas_map[i]['can_bus'][-1] = 0
@@ -74,9 +74,9 @@ class CustomNuScenesDataset(NuScenesDataset):
                 metas_map[i]['prev_bev_exists'] = True
                 tmp_pos = copy.deepcopy(metas_map[i]['can_bus'][:3])
                 tmp_angle = copy.deepcopy(metas_map[i]['can_bus'][-1])
-                metas_map[i]['can_bus'][:3] -= prev_pos    # 得到的是每一帧的相对位置(这里len(queue)=4)，这样做就与inference时不符
+                metas_map[i]['can_bus'][:3] -= prev_pos   
                 metas_map[i]['can_bus'][-1] -= prev_angle
-                prev_pos = copy.deepcopy(tmp_pos)   # 更新prev...
+                prev_pos = copy.deepcopy(tmp_pos) 
                 prev_angle = copy.deepcopy(tmp_angle)
         queue[-1]['img'] = DC(torch.stack(imgs_list), cpu_only=False, stack=True) # (num_view, C, W, H, queue length)
         queue[-1]['img_metas'] = DC(metas_map, cpu_only=True)  # keys = [0, 1, 2, 3]
@@ -161,14 +161,14 @@ class CustomNuScenesDataset(NuScenesDataset):
                 ))
 
         if not self.test_mode:
-            annos = self.get_ann_info(index)  # TODO(zzh)： check here已修改 Done
+            annos = self.get_ann_info(index) 
             input_dict['ann_info'] = annos
 
         rotation = Quaternion(input_dict['ego2global_rotation'])
         translation = input_dict['ego2global_translation']
         can_bus = input_dict['can_bus']
-        can_bus[:3] = translation  # 将can_bus的pose,rotation换成LiDAR_pose的
-        # TODO(zzh):fix can_bus format, in https://github.com/OpenDriveLab/UniAD/pull/214 [Done]
+        can_bus[:3] = translation
+        # NOTE:fix can_bus format, in https://github.com/OpenDriveLab/UniAD/pull/214 [Done]
         can_bus[3:7] = rotation.elements  
         patch_angle = quaternion_yaw(rotation) / np.pi * 180
         if patch_angle < 0:

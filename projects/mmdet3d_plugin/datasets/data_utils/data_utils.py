@@ -26,10 +26,7 @@ def output_to_nusc_box(detection):
     box_gravity_center = box3d.gravity_center.numpy()
     box_dims = box3d.dims.numpy()
     box_yaw = box3d.yaw.numpy()
-    # TODO: check whether this is necessary
-    # with dir_offset & dir_limit in the head
-    # TODO(box3d): convert bbox_yaw and bbox_dims to mmdet3d v1.0.0rc6 format. [DONE]
-    # box_yaw = -box_yaw - np.pi / 2
+    # NOTE: We converted bbox_yaw and bbox_dims to mmdet3d v1.0.0rc6 format.
 
     box_list = []
     for i in range(len(box3d)):
@@ -76,10 +73,7 @@ def output_to_nusc_box_det(detection):
     box_gravity_center = box3d.gravity_center.numpy()
     box_dims = box3d.dims.numpy()
     box_yaw = box3d.yaw.numpy()
-    # TODO: check whether this is necessary
-    # with dir_offset & dir_limit in the head
-    # TODO(box3d): convert bbox_yaw and bbox_dims to mmdet3d v1.0.0rc6 format. [DONE]
-    # box_yaw = -box_yaw - np.pi / 2
+    # NOTE: We converted bbox_yaw and bbox_dims to mmdet3d v1.0.0rc6 format.
 
     box_list = []
     for i in range(len(box3d)):

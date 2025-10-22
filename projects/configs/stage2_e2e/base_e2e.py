@@ -39,7 +39,6 @@ _feed_dim_ = _ffn_dim_
 _dim_half_ = _pos_dim_
 canvas_size = (bev_h_, bev_w_)
 queue_length = 3  # each sequence contains `queue_length` frames.
-# queue_length = 1   # debug时用1
 
 ### traj prediction args ###
 predict_steps = 12
@@ -417,7 +416,7 @@ model = dict(
         group_id_list=group_id_list,
         num_anchor=6,
         use_nonlinear_optimizer=use_nonlinear_optimizer,
-        anchor_info_path='data/others/motion_anchor_infos_mode6_new.pkl',
+        anchor_info_path='data/others/motion_anchor_infos_mode6.pkl',
         transformerlayers=dict(
             type='MotionTransformerDecoder',
             pc_range=point_cloud_range,
@@ -480,7 +479,6 @@ file_client_args = dict(backend="disk")
 ann_file_train=info_root + f"nuscenes_infos_temporal_train.pkl"
 ann_file_val=info_root + f"nuscenes_infos_temporal_val.pkl"
 ann_file_test = info_root + f"nuscenes_infos_temporal_val.pkl"
-# ann_file_test=info_root + f"nuscenes_infos_temporal_test.pkl"
 
 
 train_pipeline = [
@@ -700,11 +698,8 @@ runner = dict(type="EpochBasedRunner", max_epochs=total_epochs)
 log_config = dict(
     interval=10, hooks=[dict(type="TextLoggerHook"), dict(type="TensorboardLoggerHook")]
 )
-# checkpoint_config = dict(interval=1)
-checkpoint_config = dict(interval=4)
+checkpoint_config = dict(interval=1)
 load_from = "ckpts/uniad_base_track_map.pth"
-# 添加resume_from参数来继续训练
-# resume_from = "projects/work_dirs/stage2_e2e/base_e2e/epoch_12.pth"
 
 find_unused_parameters = True
 logger_name = 'mmdet'

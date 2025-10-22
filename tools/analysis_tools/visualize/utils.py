@@ -103,9 +103,9 @@ class AgentPredictionData:
         self.pred_center = pred_center
         self.pred_dim = pred_dim
         temp = pred_dim.copy()
-        self.pred_dim[0] = temp[1]  # TODO(bbox3d): 修改lwh ---> wlh 以适应nuScenes可视化
+        self.pred_dim[0] = temp[1]  # NOTE: we fixed the box dim, form lwh to wlh for adapting the nuScenes visualize tools.
         self.pred_dim[1] = temp[0]
-        # TODO(box3d): we have changed yaw to mmdet3d 1.0.0rc6 format, maybe we should change this. [DONE]
+        # NOTE: we have changed yaw to mmdet3d 1.0.0rc6 format, maybe we should change this. 
         self.pred_yaw = pred_yaw
         self.pred_vel = pred_vel
         self.pred_traj = pred_traj
@@ -127,9 +127,7 @@ class AgentPredictionData:
             label=pred_label,
             score=pred_score
         )
-        # 1.56：SDC 车辆高度（米）
-        # -1.2：地面相对参考平面的高度（米）
-        # 1.56/2 = 0.78：车辆高度的一半  保证车辆底部贴地
+
         if is_sdc:
             self.pred_center = [0, 0, -1.2+1.56/2]
         self.is_sdc = is_sdc

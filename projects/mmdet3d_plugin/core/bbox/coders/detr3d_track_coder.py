@@ -104,8 +104,7 @@ class DETRTrack3DCoder(BaseBBoxCoder):
                 mask = torch.ones_like(mask) > 0
             if self.with_nms:
                 mask &= nms_mask
-            # TODO(box3d): Here we retrained BEVFormer, so this boxes3d is correct. [DONE]
-            boxes3d = final_box_preds[mask]  # sdc
+            boxes3d = final_box_preds[mask]
             scores = final_scores[mask]  
             labels = final_preds[mask]
             track_scores = track_scores[mask]

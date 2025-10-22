@@ -100,7 +100,7 @@ class PerceptionTransformer(BaseModule):
     @auto_fp16(apply_to=('mlvl_feats', 'bev_queries', 'prev_bev', 'bev_pos'))
     def get_bev_features(
             self,
-            mlvl_feats,  # 多尺度特征图  list:length=4
+            mlvl_feats,  
             bev_queries,
             bev_h,
             bev_w,
@@ -128,27 +128,7 @@ class PerceptionTransformer(BaseModule):
         delta_lidar = np.array(delta_lidar)
         shift_y = delta_lidar[:, 1] / real_h
         shift_x = delta_lidar[:, 0] / real_w
-        # delta_x = np.array([each['can_bus'][0]
-        #                    for each in img_metas])
-        # delta_y = np.array([each['can_bus'][1]
-        #                    for each in img_metas])
-        # # print(f'\n delta_x: {delta_x} and delta_y: {delta_y}')
-        # ego_angle = np.array(
-        #     [each['can_bus'][-2] / np.pi * 180 for each in img_metas])
-        # grid_length_y = grid_length[0]
-        # grid_length_x = grid_length[1]
-        # translation_length = np.sqrt(delta_x ** 2 + delta_y ** 2)
-        # translation_angle = np.arctan2(delta_y, delta_x) / np.pi * 180
-        # bev_angle = ego_angle - translation_angle
-        # # TODO(zzh): 这里应该修改，推算出来，BEV的y向上，x向右 [Done]
-        # # shift_y = translation_length * \
-        # #     np.cos(bev_angle / 180 * np.pi) / grid_length_y / bev_h
-        # # shift_x = translation_length * \
-        # #     np.sin(bev_angle / 180 * np.pi) / grid_length_x / bev_w
-        # shift_y = translation_length * \
-        #     np.sin(bev_angle / 180 * np.pi) / grid_length_y / bev_h
-        # shift_x = translation_length * \
-        #     np.cos(bev_angle / 180 * np.pi) / grid_length_x / bev_w
+
         shift_y = shift_y * self.use_shift
         shift_x = shift_x * self.use_shift
         shift = bev_queries.new_tensor(
