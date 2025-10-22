@@ -89,11 +89,6 @@ def anchor_coordinate_transform(anchors, bbox_results, with_translation_transfor
         torch.Tensor: A tensor containing the transformed anchor coordinates.
     """
     batch_size = len(bbox_results)
-    # import pickle
-    # with open('anchor.pkl', 'wb') as f:
-    #     pickle.dump(anchors, f)   
-    # with open('bbox_results.pkl', 'wb') as f:
-    #     pickle.dump(bbox_results, f)
     batched_anchors = []
     transformed_anchors = anchors[None, ...] # expand num agents: num_groups, num_modes, 12, 2 -> 1, ...
     for i in range(batch_size):
@@ -101,9 +96,7 @@ def anchor_coordinate_transform(anchors, bbox_results, with_translation_transfor
         yaw = bboxes.yaw.to(transformed_anchors.device)
         bbox_centers = bboxes.gravity_center.to(transformed_anchors.device) 
         if with_rotation_transform:
-            # TODO(box3d): we have changed yaw to mmdet3d 1.0.0rc6 format, maybe we should change this.[Done]
-            # angle = yaw - torch.pi
-            # angle = yaw - torch.pi / 2 # num_agents, 1
+            # NOTE: we have changed yaw to mmdet3d 1.0.0rc6 format, maybe we should change this.
             angle = yaw
             rot_yaw = rot_2d(angle) # num_agents, 2, 2 
             rot_yaw = rot_yaw[:, None, None,:, :] # num_agents, 1, 1, 2, 2
@@ -130,11 +123,6 @@ def trajectory_coordinate_transform(trajectory, bbox_results, with_translation_t
     """
     batch_size = len(bbox_results)
     batched_trajectories = []
-    # import pickle
-    # with open('trajectory.pkl', 'wb') as f:
-    #     pickle.dump(trajectory, f)   
-    # with open('bbox_results2.pkl', 'wb') as f:
-    #     pickle.dump(bbox_results, f)
     for i in range(batch_size):
         bboxes, scores, labels, bbox_index, mask = bbox_results[i]
         yaw = bboxes.yaw.to(trajectory.device)
@@ -142,9 +130,7 @@ def trajectory_coordinate_transform(trajectory, bbox_results, with_translation_t
         transformed_trajectory = trajectory[i,...]
         if with_rotation_transform:
             # we take negtive here, to reverse the trajectory back to ego centric coordinate
-            # TODO(box3d): we have changed yaw to mmdet3d 1.0.0rc6 format, maybe we should change this. [DONE]
-            # angle = -(yaw - torch.pi)
-            # angle = -(yaw - torch.pi/2)
+            # NOTE: we have changed yaw to mmdet3d 1.0.0rc6 format, maybe we should change this.
             angle = -yaw  
             rot_yaw = rot_2d(angle)
             rot_yaw = rot_yaw[:,None, None,:, :] # A, 1, 1, 2, 2

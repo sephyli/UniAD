@@ -127,7 +127,6 @@ class AgentPredictionData:
             label=pred_label,
             score=pred_score
         )
-
         if is_sdc:
             self.pred_center = [0, 0, -1.2+1.56/2]
         self.is_sdc = is_sdc

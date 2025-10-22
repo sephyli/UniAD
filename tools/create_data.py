@@ -4,6 +4,7 @@ import sys
 from data_converter import uniad_nuscenes_converter as nuscenes_converter
 sys.path.append('.')
 
+
 def nuscenes_data_prep(root_path,
                        can_bus_root_path,
                        info_prefix,

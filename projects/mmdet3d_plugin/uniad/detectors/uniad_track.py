@@ -340,7 +340,7 @@ class UniADTrack(MVXTwoStageDetector):
             prev_bev = self.get_history_bev(prev_img, prev_img_metas)
 
         img_feats = self.extract_img_feat(img=imgs)
-        if self.freeze_bev_encoder:   # no grad ---> load the checkpoint
+        if self.freeze_bev_encoder:
             with torch.no_grad():
                 bev_embed, bev_pos = self.pts_bbox_head.get_bev_features(
                     mlvl_feats=img_feats, img_metas=img_metas, prev_bev=prev_bev)
@@ -382,13 +382,10 @@ class UniADTrack(MVXTwoStageDetector):
                 so no need to call velocity update
         """
         # NOTE: You can replace BEVFormer with other BEV encoder and provide bev_embed here
-        # NOTE: BEVFormer outputs
         bev_embed, bev_pos = self.get_bevs(
             img, img_metas,
             prev_img=prev_img, prev_img_metas=prev_img_metas,
         )
-
-        
         det_output = self.pts_bbox_head.get_detections(
             bev_embed,
             object_query_embeds=track_instances.query,
@@ -397,7 +394,7 @@ class UniADTrack(MVXTwoStageDetector):
         )
 
         output_classes = det_output["all_cls_scores"]
-        output_coords = det_output["all_bbox_preds"]   # [6, 1, 901, 10]
+        output_coords = det_output["all_bbox_preds"]
         output_past_trajs = det_output["all_past_traj_preds"]
         last_ref_pts = det_output["last_ref_points"]
         query_feats = det_output["query_feats"]
@@ -411,7 +408,7 @@ class UniADTrack(MVXTwoStageDetector):
             "bev_pos": bev_pos
         }
         with torch.no_grad():
-            track_scores = output_classes[-1, 0, :].sigmoid().max(dim=-1).values  # [901]  query + sdc
+            track_scores = output_classes[-1, 0, :].sigmoid().max(dim=-1).values
 
         # Step-1 Update track instances with current prediction
         # [nb_dec, bs, num_query, xxx]
@@ -451,7 +448,7 @@ class UniADTrack(MVXTwoStageDetector):
             track_instances.pred_boxes = output_coords[i, 0]  # [300, box_dim]
             track_instances.pred_past_trajs = output_past_trajs[i, 0]  # [300,past_steps, 2]
 
-            out["track_instances"] = track_instances 
+            out["track_instances"] = track_instances
             track_instances, matched_indices = self.criterion.match_for_single_frame(
                 out, i, if_step=(i == (nb_dec - 1))
             )
@@ -461,8 +458,8 @@ class UniADTrack(MVXTwoStageDetector):
             all_instances_pred_boxes.append(output_coords[i, 0])   # Not used
         
         active_index = (track_instances.obj_idxes>=0) & (track_instances.iou >= self.gt_iou_threshold) & (track_instances.matched_gt_idxes >=0)
-        out.update(self.select_active_track_query(track_instances, active_index, img_metas))   # predict bbox decode
-        out.update(self.select_sdc_track_query(track_instances[900], img_metas))   # sdc decoder
+        out.update(self.select_active_track_query(track_instances, active_index, img_metas))
+        out.update(self.select_sdc_track_query(track_instances[900], img_metas))
         
         # memory bank 
         if self.memory_bank is not None:
@@ -510,7 +507,7 @@ class UniADTrack(MVXTwoStageDetector):
         Args:
         Returns:
         """
-        track_instances = self._generate_empty_tracks()  
+        track_instances = self._generate_empty_tracks()
         num_frame = img.size(1)
         # init gt instances!
         gt_instances_list = []
@@ -519,7 +516,7 @@ class UniADTrack(MVXTwoStageDetector):
             gt_instances = Instances((1, 1))
             boxes = gt_bboxes_3d[0][i].tensor.to(img.device)
             # normalize gt bboxes here!
-            boxes = normalize_bbox(boxes, self.pc_range)   # bboxes normalization  TODO(box3d):
+            boxes = normalize_bbox(boxes, self.pc_range)
             sd_boxes = gt_sdc_bbox[0][i].tensor.to(img.device)
             sd_boxes = normalize_bbox(sd_boxes, self.pc_range)
             gt_instances.boxes = boxes
@@ -554,7 +551,7 @@ class UniADTrack(MVXTwoStageDetector):
             all_matched_idxes = []
             all_instances_pred_logits = []
             all_instances_pred_boxes = []
-            frame_res = self._forward_single_frame_train(  
+            frame_res = self._forward_single_frame_train(
                 img_single,
                 img_metas_single,
                 track_instances,
@@ -653,7 +650,6 @@ class UniADTrack(MVXTwoStageDetector):
         track_instances = Instances.cat([other_inst, active_inst])
 
         # NOTE: You can replace BEVFormer with other BEV encoder and provide bev_embed here
-        # NOTE: BEVFormer outputs
         bev_embed, bev_pos = self.get_bevs(img, img_metas, prev_bev=prev_bev)
         det_output = self.pts_bbox_head.get_detections(
             bev_embed, 

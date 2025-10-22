@@ -297,7 +297,7 @@ class OccHead(BaseModule):
         
         all_matched_gt_ids = outs_dict['all_matched_idxes']  # list of tensor, length bs
 
-        ins_query = self.merge_queries(outs_dict, self.detach_query_pos)   # merge trajectory query and track query
+        ins_query = self.merge_queries(outs_dict, self.detach_query_pos)
 
         # Forward the occ-flow model
         mask_preds_batch, ins_seg_preds_batch = self(bev_feat, ins_query=ins_query)
