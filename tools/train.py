@@ -25,12 +25,12 @@ from mmseg import __version__ as mmseg_version
 warnings.filterwarnings("ignore")
 
 from mmcv.utils import TORCH_VERSION, digit_version
-import debugpy
-#保证host和端口一致，listen可以只设置端口。则为localhost,否则设置成(host,port)
-debugpy.listen(17171)
-print('wait debugger')
-debugpy.wait_for_client()
-print("Debugger Attached")
+# import debugpy
+# #保证host和端口一致，listen可以只设置端口。则为localhost,否则设置成(host,port)
+# debugpy.listen(17171)
+# print('wait debugger')
+# debugpy.wait_for_client()
+# print("Debugger Attached")
 
 def parse_args():
     parser = argparse.ArgumentParser(description='Train a detector')
