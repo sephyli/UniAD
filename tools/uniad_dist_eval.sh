@@ -8,11 +8,7 @@ CFG=$1                                               #
 CKPT=$2                                              #
 GPUS=$3                                              #    
 # -------------------------------------------------- #
-if [ $GPUS -lt 8 ]; then
-    GPUS_PER_NODE=$GPUS
-else
-    GPUS_PER_NODE=8
-fi
+GPUS_PER_NODE=$(($GPUS<8?$GPUS:8))
 
 MASTER_PORT=${MASTER_PORT:-28596}
 WORK_DIR=$(echo ${CFG%.*} | sed -e "s/configs/work_dirs/g")/
@@ -22,15 +18,14 @@ if [ ! -d ${WORK_DIR}logs ]; then
     mkdir -p ${WORK_DIR}logs
 fi
 
-
 PYTHONPATH="$(dirname $0)/..":$PYTHONPATH \
-python -m torch.distributed.run \
+torchrun \
     --nproc_per_node=$GPUS_PER_NODE \
     --master_port=$MASTER_PORT \
     $(dirname "$0")/test.py \
     $CFG \
     $CKPT \
-    ${@:4} \
+    --launcher pytorch ${@:4} \
     --eval bbox \
     --show-dir ${WORK_DIR} \
     2>&1 | tee ${WORK_DIR}logs/eval.$T

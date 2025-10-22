@@ -34,9 +34,7 @@ def nonlinear_smoother(gt_bboxes_3d, gt_fut_traj, gt_fut_traj_mask, bbox_tensor)
     gt_fut_traj_xy_diff = np.diff(gt_fut_traj_xy_diff, axis=1)
     gt_fut_traj_yaw = np.arctan2(
         gt_fut_traj_xy_diff[:, :, 1], gt_fut_traj_xy_diff[:, :, 0])
-    # TODO(box3d): we have changed yaw to mmdet3d 1.0.0rc6 format, maybe we should change this. [DONE]
-    # gt_fut_traj_yaw = np.concatenate(
-    #     [-np.pi/2 - gt_bboxes_3d[:, None, 6:7], gt_fut_traj_yaw[:, :, None]], axis=1)
+    # NOTE: we have changed yaw to mmdet3d 1.0.0rc6 format, maybe we should change this. 
     gt_fut_traj_yaw = np.concatenate(
         [gt_bboxes_3d[:, None, 6:7], gt_fut_traj_yaw[:, :, None]], axis=1)
     gt_fut_traj = np.concatenate(
@@ -73,15 +71,13 @@ def nonlinear_smoother(gt_bboxes_3d, gt_fut_traj, gt_fut_traj_mask, bbox_tensor)
     perturb_used_count = 0
     for i in range(gt_fut_traj.shape[0]):
         ts = ts_limit[i]
-        # TODO(box3d): we have changed yaw to mmdet3d 1.0.0rc6 format, maybe we should change this. [DONE]
-        # x_curr = [bbox_tensor[i, 0], bbox_tensor[i, 1], -
-        #     np.pi/2 - yaw_preds[i], speed_preds[i]]
+        # NOTE(box3d): we have changed yaw to mmdet3d 1.0.0rc6 format, maybe we should change this. [DONE]
         x_curr = [bbox_tensor[i, 0], bbox_tensor[i, 1], 
                   yaw_preds[i], speed_preds[i]]
         reference_trajectory = np.concatenate(
             [gt_fut_traj[i], gt_fut_traj_yaw[i]], axis=-1)
         if ts > 1 and _is_dynamic(gt_fut_traj[i], int(ts), 2) and _check_diff(x_curr, reference_trajectory):
-            smoother = MotionNonlinearSmoother( 
+            smoother = MotionNonlinearSmoother(
                 trajectory_len=int(ts), dt=0.5)
             reference_trajectory = reference_trajectory[:int(ts)+1, :]
             smoother.set_reference_trajectory(x_curr, reference_trajectory)
@@ -96,7 +92,7 @@ def nonlinear_smoother(gt_bboxes_3d, gt_fut_traj, gt_fut_traj_mask, bbox_tensor)
                 traj_perturb_tmp = traj_perturb[1:,
                                                 :2] - traj_perturb[0:1, :2]
                 traj_perturb = np.zeros((12, 2))
-                traj_perturb[:traj_perturb_tmp.shape[0], 
+                traj_perturb[:traj_perturb_tmp.shape[0],
                              :] = traj_perturb_tmp[:, :2]
                 perturb_count += 1
         else:

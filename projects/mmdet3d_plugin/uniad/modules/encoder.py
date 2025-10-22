@@ -98,7 +98,7 @@ class BEVFormerEncoder(TransformerLayerSequence):
         reference_points = reference_points.clone()
 
         reference_points[..., 0:1] = reference_points[..., 0:1] * \
-            (pc_range[3] - pc_range[0]) + pc_range[0] 
+            (pc_range[3] - pc_range[0]) + pc_range[0]
         reference_points[..., 1:2] = reference_points[..., 1:2] * \
             (pc_range[4] - pc_range[1]) + pc_range[1]
         reference_points[..., 2:3] = reference_points[..., 2:3] * \
@@ -191,7 +191,7 @@ class BEVFormerEncoder(TransformerLayerSequence):
 
         # NOTE: We have fixed this bug
         shift_ref_2d = ref_2d.clone()
-        shift_ref_2d += shift[:, None, None, :]  
+        shift_ref_2d += shift[:, None, None, :]
 
         # (num_query, bs, embed_dims) -> (bs, num_query, embed_dims)
         bev_query = bev_query.permute(1, 0, 2)
