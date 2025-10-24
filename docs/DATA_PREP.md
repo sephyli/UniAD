@@ -14,12 +14,13 @@ mkdir data
 
 **Prepare UniAD data info**
 
-*Option1: We have already prepared the off-the-shelf data infos for you:*
+*Option1: We have already prepared the off-the-shelf data infos for you in [HuggingFace::OpenDriveLab/UniAD2.0_R101_nuScenes](https://huggingface.co/OpenDriveLab/UniAD2.0_R101_nuScenes/tree/main/data):*
 ```shell
 cd UniAD/data
 mkdir infos && cd infos
-wget https://github.com/OpenDriveLab/UniAD/releases/download/v1.0/nuscenes_infos_temporal_train.pkl  # train_infos
-wget https://github.com/OpenDriveLab/UniAD/releases/download/v1.0/nuscenes_infos_temporal_val.pkl  # val_infos
+wget https://huggingface.co/OpenDriveLab/UniAD2.0_R101_nuScenes/resolve/main/data/nuscenes_infos_temporal_train.pkl?download=true # train_infos
+
+wget https://huggingface.co/OpenDriveLab/UniAD2.0_R101_nuScenes/resolve/main/data/nuscenes_infos_temporal_val.pkl?download=true # val_infos
 ```
 
 
@@ -33,10 +34,12 @@ mkdir infos
 ```
 
 **Prepare Motion Anchors**
+
+We already upload motion anchors in [HuggingFace::OpenDriveLab/UniAD2.0_R101_nuScenes](https://huggingface.co/OpenDriveLab/UniAD2.0_R101_nuScenes/tree/main/data)
 ```shell
 cd UniAD/data
 mkdir others && cd others
-wget https://github.com/OpenDriveLab/UniAD/releases/download/v1.0/motion_anchor_infos_mode6.pkl
+wget https://huggingface.co/OpenDriveLab/UniAD2.0_R101_nuScenes/resolve/main/data/motion_anchor_infos_mode6.pkl?download=true
 ```
 
 **The Overall Structure**
