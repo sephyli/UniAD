@@ -95,7 +95,7 @@ UniAD is trained in two stages. Pretrained checkpoints of both stages will be re
 
 | Method | Encoder | Tracking<br>AMOTA | Mapping<br>IoU-lane | config | Download |
 | :---: | :---: | :---: | :---: | :---:|:---:| 
-| UniAD-B | R101 | 0.390 | 0.297 |  [base-stage1](projects/configs/stage1_track_map/base_track_map.py) | [base-stage1](https://github.com/OpenDriveLab/UniAD/releases/download/v1.0/uniad_base_track_map.pth) |
+| UniAD-B | R101 | 0.394 | 0.294 |  [base-stage1](projects/configs/stage1_track_map/base_track_map.py) | [base-stage1](https://github.com/OpenDriveLab/UniAD/releases/download/v1.0/uniad_base_track_map.pth) |
 
 
 
@@ -107,7 +107,7 @@ Pre-trained models and results under main metrics are provided below. We refer y
 
 | Method | Encoder | Tracking<br>AMOTA | Mapping<br>IoU-lane | Motion<br>minADE |Occupancy<br>IoU-n. | Planning<br>avg.Col. | config | Download |
 | :---: | :---: | :---: | :---: | :---:|:---:| :---: | :---: | :---: |
-| UniAD-B | R101 | 0.363 | 0.313 | 0.705 | 63.7 | 0.29 |  [base-stage2](projects/configs/stage2_e2e/base_e2e.py) | [base-stage2](https://github.com/OpenDriveLab/UniAD/releases/download/v1.0.1/uniad_base_e2e.pth) |
+| UniAD-B | R101 | 0.380 | 0.314 | 0.794 | 64.0 | 0.29 |  [base-stage2](projects/configs/stage2_e2e/base_e2e.py) | [base-stage2](https://github.com/OpenDriveLab/UniAD/releases/download/v1.0.1/uniad_base_e2e.pth) |
 
 > Planning results on the nuScense benchmark
 
@@ -131,14 +131,14 @@ Pre-trained models and results under main metrics are provided below. We refer y
   <tr>
     <td>UniAD-B</td>
     <td>R101</td>
-    <td>0.48</td>
-    <td>0.96</td>
-    <td>1.65</td>
-    <td>1.03</td>
-    <td>0.05</td>
-    <td>0.17</td>
-    <td>0.71</td>
-    <td>0.31</td>
+    <td>0.29</td>
+    <td>0.89</td>
+    <td>1.53</td>
+    <td>0.90</td>
+    <td>0.15</td>
+    <td>0.20</td>
+    <td>0.53</td>
+    <td>0.29</td>
   </tr>
 </table>
 

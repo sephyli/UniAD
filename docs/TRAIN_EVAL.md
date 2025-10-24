@@ -13,9 +13,9 @@ If everything is prepared properly, the output results should be:
 
 ```
 Aggregated results: 
-AMOTA	0.390 
-AMOTP	1.300
-RECALL	0.489
+AMOTA	0.394 
+AMOTP	1.316
+RECALL	0.484
 ```
 
 **Note**: If you evaluate with different number of GPUs rather than 8, the results might be slightly different.

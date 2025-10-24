@@ -48,18 +48,22 @@ pip install -r requirements.txt
 
 
 **i. Prepare pretrained weights.**
+
+We release our pretrained weights in [HuggingFace::OpenDriveLab/UniAD2.0_R101_nuScenes](https://huggingface.co/OpenDriveLab/UniAD2.0_R101_nuScenes/tree/main/ckpts)
+
 ```shell
-mkdir ckpts && cd ckpts
+mkdir ckpts & cd ckpts
+# r101_dcn_fcos3d_pretrain.pth (from bevformer)
+wget https://huggingface.co/OpenDriveLab/UniAD2.0_R101_nuScenes/resolve/main/ckpts/r101_dcn_fcos3d_pretrain.pth?download=true
 
-# Pretrained weights of bevformer
-# Also the initial state of training stage1 model
-wget https://github.com/zhiqi-li/storage/releases/download/v1.0/bevformer_r101_dcn_24ep.pth
+# bevformer_r101_dcn_24ep.pth
+wget https://huggingface.co/OpenDriveLab/UniAD2.0_R101_nuScenes/resolve/main/ckpts/bevformer_r101_dcn_24ep.pth?download=true
 
-# Pretrained weights of stage1 model (perception part of UniAD)
-wget https://github.com/OpenDriveLab/UniAD/releases/download/v1.0/uniad_base_track_map.pth
+# uniad_base_track_map.pth
+wget https://huggingface.co/OpenDriveLab/UniAD2.0_R101_nuScenes/resolve/main/ckpts/uniad_base_track_map.pth?download=true
 
-# Pretrained weights of stage2 model (fully functional UniAD)
-wget https://github.com/OpenDriveLab/UniAD/releases/download/v1.0.1/uniad_base_e2e.pth
+# uniad_base_e2e.pth
+wget https://huggingface.co/OpenDriveLab/UniAD2.0_R101_nuScenes/resolve/main/ckpts/uniad_base_e2e.pth?download=true
 ```
 
 ---
