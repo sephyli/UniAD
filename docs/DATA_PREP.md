@@ -18,9 +18,9 @@ mkdir data
 ```shell
 cd UniAD/data
 mkdir infos && cd infos
-wget https://huggingface.co/OpenDriveLab/UniAD2.0_R101_nuScenes/resolve/main/data/nuscenes_infos_temporal_train.pkl?download=true # train_infos
+wget https://huggingface.co/OpenDriveLab/UniAD2.0_R101_nuScenes/resolve/main/data/nuscenes_infos_temporal_train.pkl # train_infos
 
-wget https://huggingface.co/OpenDriveLab/UniAD2.0_R101_nuScenes/resolve/main/data/nuscenes_infos_temporal_val.pkl?download=true # val_infos
+wget https://huggingface.co/OpenDriveLab/UniAD2.0_R101_nuScenes/resolve/main/data/nuscenes_infos_temporal_val.pkl # val_infos
 ```
 
 
@@ -39,7 +39,7 @@ We already upload motion anchors in [HuggingFace::OpenDriveLab/UniAD2.0_R101_nuS
 ```shell
 cd UniAD/data
 mkdir others && cd others
-wget https://huggingface.co/OpenDriveLab/UniAD2.0_R101_nuScenes/resolve/main/data/motion_anchor_infos_mode6.pkl?download=true
+wget https://huggingface.co/OpenDriveLab/UniAD2.0_R101_nuScenes/resolve/main/data/motion_anchor_infos_mode6.pkl
 ```
 
 **The Overall Structure**
