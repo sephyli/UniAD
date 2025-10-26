@@ -12,33 +12,14 @@ conda activate uniad2.0
 pip install torch==2.0.1 torchvision==0.15.2 torchaudio==2.0.2 --index-url https://download.pytorch.org/whl/cu118
 ```
 
-**c. GCC: Make sure gcc>=5 in conda env.**
+**c. Install mmcv-series packages.**
 ```shell
-# If gcc is not installed:
-# conda install -c omgarcia gcc-6 # gcc-6.2
-
-export PATH=YOUR_GCC_PATH/bin:$PATH
-# Eg: export PATH=/mnt/gcc-5.4/bin:$PATH
-```
-
-**d. CUDA: Before installing MMCV family, you need to set up the CUDA_HOME (for compiling some operators on the gpu).**
-```shell
-export CUDA_HOME=YOUR_CUDA_PATH/
-# Eg: export CUDA_HOME=/mnt/cuda-11.8/
-```
-
-
-**e. Install mmcv-series packages.**
-```shell
-git clone https://github.com/open-mmlab/mmcv.git & cd mmcv
-git checkout v1.6.0
-export MMCV_WITH_OPS=1 MMCV_CUDA_ARGS=-std=c++17
-pip install -v -e .
+pip install -v mmcv-full==1.6.1 -f https://download.openmmlab.com/mmcv/dist/cu118/torch2.0/index.html
 pip install mmdet==2.26.0 mmsegmentation==0.29.1 mmdet3d==1.0.0rc6
 ```
 
 
-**h. Install UniAD.**
+**d. Install UniAD.**
 ```shell
 cd ~
 git clone https://github.com/OpenDriveLab/UniAD.git
@@ -47,7 +28,7 @@ pip install -r requirements.txt
 ```
 
 
-**i. Prepare pretrained weights.**
+**e. Prepare pretrained weights.**
 
 We release our pretrained weights in [HuggingFace::OpenDriveLab/UniAD2.0_R101_nuScenes](https://huggingface.co/OpenDriveLab/UniAD2.0_R101_nuScenes/tree/main/ckpts)
 
